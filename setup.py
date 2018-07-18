@@ -57,7 +57,8 @@ install_requires = [
     'Flask-BabelEx>=0.9.2',
     'transitions>=0.6.8',
     'invenio-db>=1.0.0',
-    'invenio-records>=1.0.0'
+    'invenio-records>=1.0.0',
+    'pygraphviz>=1.3.1'
 ]
 
 packages = find_packages()
@@ -89,6 +90,9 @@ setup(
         ],
         'invenio_i18n.translations': [
             'messages = invenio_circulation',
+        ],
+        'flask.commands': [
+            'circulation = invenio_circulation.cli:circulation',
         ],
         # TODO: Edit these entry points to fit your needs.
         # 'invenio_access.actions': [],
