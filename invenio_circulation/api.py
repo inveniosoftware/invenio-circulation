@@ -12,6 +12,7 @@ from datetime import datetime
 from flask import current_app
 from invenio_records.api import Record
 from transitions import Machine
+from transitions.extensions import GraphMachine
 
 STATES = ['CREATED', 'PENDING', 'ITEM_ON_LOAN', 'ITEM_RETURNED',
           'ITEM_IN_TRANSIT', 'ITEM_AT_DESK']
@@ -101,3 +102,11 @@ class Loan(Record):
         else:
             self['state'] = self.state
             self.commit()
+
+    @classmethod
+    def save_diagram(cls, output_file):
+        """."""
+        m = GraphMachine(states=STATES, transitions=TRANSITIONS,
+                         initial=STATES[0], show_conditions=True,
+                         title='Circulation State Diagram')
+        m.get_graph().draw(output_file, prog='dot')
