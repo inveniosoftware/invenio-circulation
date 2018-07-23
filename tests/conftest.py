@@ -81,8 +81,9 @@ def base_app(instance_path):
     app_.config.update(
         SERVER_NAME='localhost:5000',
         SECRET_KEY='SECRET_KEY',
-        SQLALCHEMY_DATABASE_URI=os.environ.get('SQLALCHEMY_DATABASE_URI',
-                                               'sqlite://'),  # in memory
+        SQLALCHEMY_DATABASE_URI=os.environ.get(
+            'SQLALCHEMY_DATABASE_URI', 'sqlite://'
+        ),  # in memory
         SQLALCHEMY_TRACK_MODIFICATIONS=True,
         # No permission checking
         RECORDS_REST_DEFAULT_READ_PERMISSION_FACTORY=None,
@@ -121,5 +122,7 @@ def db(app):
 @pytest.fixture()
 def json_headers(app):
     """JSON headers."""
-    return [('Content-Type', 'application/json'),
-            ('Accept', 'application/json')]
+    return [
+        ('Content-Type', 'application/json'),
+        ('Accept', 'application/json'),
+    ]

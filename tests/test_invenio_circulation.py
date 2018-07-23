@@ -18,6 +18,7 @@ from invenio_circulation import InvenioCirculation
 def test_version():
     """Test version import."""
     from invenio_circulation import __version__
+
     assert __version__
 
 
