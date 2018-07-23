@@ -28,8 +28,9 @@ def is_checkout_valid(
     end_date=None,
 ):
     """."""
-    default_loan_duration = \
-        current_app.config.get('CIRCULATION_DEFAULT_LOAN_DURATION')
+    default_loan_duration = current_app.config.get(
+        'CIRCULATION_DEFAULT_LOAN_DURATION'
+    )
     if not start_date:
         start_date = transaction_date
     if not end_date:
@@ -67,8 +68,9 @@ def is_request_valid(
     request_expire_date=None,
 ):
     """."""
-    default_request_duration = \
-        current_app.config.get('CIRCULATION_DEFAULT_REQUEST_DURATION')
+    default_request_duration = current_app.config.get(
+        'CIRCULATION_DEFAULT_REQUEST_DURATION'
+    )
     # item location by default
     if not pickup_location_pid:
         pickup_location_pid = current_app.config.get(

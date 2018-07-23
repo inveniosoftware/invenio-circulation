@@ -18,5 +18,5 @@ def loanid_fetcher(record_uuid, data):
     return FetchedPID(
         provider=None,
         pid_type=_CIRCULATION_LOAN_PID_TYPE,
-        pid_value=str(data[_CIRCULATION_LOAN_PID_TYPE])
+        pid_value=str(data[_CIRCULATION_LOAN_PID_TYPE]),
     )

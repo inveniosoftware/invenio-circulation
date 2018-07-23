@@ -70,8 +70,9 @@ app.config.update(
     # No permission checking
     RECORDS_REST_DEFAULT_READ_PERMISSION_FACTORY=None,
     SQLALCHEMY_TRACK_MODIFICATIONS=True,
-    SQLALCHEMY_DATABASE_URI=os.getenv('SQLALCHEMY_DATABASE_URI',
-                                      'sqlite:///app.db'),
+    SQLALCHEMY_DATABASE_URI=os.getenv(
+        'SQLALCHEMY_DATABASE_URI', 'sqlite:///app.db'
+    ),
 )
 app.config['RECORDS_REST_ENDPOINTS'] = CIRCULATION_REST_ENDPOINTS
 app.url_map.converters['pid'] = PIDConverter

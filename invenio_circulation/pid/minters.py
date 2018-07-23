@@ -16,8 +16,7 @@ def loanid_minter(record_uuid, data):
     """Mint loan identifiers."""
     assert _CIRCULATION_LOAN_PID_TYPE not in data
     provider = CirculationLoanIdProvider.create(
-        object_type='rec',
-        object_uuid=record_uuid,
+        object_type='rec', object_uuid=record_uuid
     )
     data[_CIRCULATION_LOAN_PID_TYPE] = provider.pid.pid_value
     return provider.pid

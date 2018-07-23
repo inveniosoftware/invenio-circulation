@@ -25,7 +25,6 @@ def test_cli_diagram(script_info, diagram_file_name):
         pytest.skip('pygraphviz module is not installed')
     runner = CliRunner()
 
-    result = runner.invoke(
-        diagram, [diagram_file_name], obj=script_info)
+    result = runner.invoke(diagram, [diagram_file_name], obj=script_info)
     assert result.exit_code == 0
     assert os.path.isfile(diagram_file_name)

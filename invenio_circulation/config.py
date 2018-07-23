@@ -9,8 +9,13 @@
 """Invenio module for the circulation of bibliographic items."""
 
 
-from .utils import is_checkin_valid, is_checkout_valid, is_request_valid, \
-    is_request_validate_valid, item_location_retriever
+from .utils import (
+    is_checkin_valid,
+    is_checkout_valid,
+    is_request_valid,
+    is_request_validate_valid,
+    item_location_retriever,
+)
 
 CIRCULATION_ITEM_LOCATION_RETRIEVER = item_location_retriever
 """."""
@@ -48,18 +53,20 @@ CIRCULATION_REST_ENDPOINTS = dict(
         search_index=None,
         search_type=None,
         record_serializers={
-            'application/json': ('invenio_records_rest.serializers'
-                                 ':json_v1_response'),
+            'application/json': (
+                'invenio_records_rest.serializers' ':json_v1_response'
+            )
         },
         search_serializers={
-            'application/json': ('invenio_records_rest.serializers'
-                                 ':json_v1_search'),
+            'application/json': (
+                'invenio_records_rest.serializers' ':json_v1_search'
+            )
         },
         list_route='/circulation/loan/',
         item_route='/circulation/loan/<pid(loanid):pid_value>',
         default_media_type='application/json',
         max_result_window=10000,
         error_handlers=dict(),
-    ),
+    )
 )
 """."""

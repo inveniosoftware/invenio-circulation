@@ -26,7 +26,8 @@ class InvenioCirculation(object):
         self.init_config(app)
         app.config.setdefault('RECORDS_REST_ENDPOINTS', {})
         app.config['RECORDS_REST_ENDPOINTS'].update(
-            app.config['CIRCULATION_REST_ENDPOINTS'])
+            app.config['CIRCULATION_REST_ENDPOINTS']
+        )
         app.extensions['invenio-circulation'] = self
 
     def init_config(self, app):
