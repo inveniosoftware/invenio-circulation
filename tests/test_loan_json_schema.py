@@ -42,7 +42,7 @@ def test_state_checkout(loan_created, db, params, loan_schema):
     """."""
     new_params = deepcopy(params)
     new_params['trigger'] = 'checkout'
-    loan = current_circulation.machine.to_next(loan_created, **new_params)
+    loan = current_circulation.circulation.trigger(loan_created, **new_params)
 
     loan.update(loan_schema)
     with pytest.raises(ValidationError):
@@ -58,5 +58,5 @@ def test_state_checkout_with_loan_pid(db, params, loan_schema):
 
     new_params = deepcopy(params)
     new_params['trigger'] = 'checkout'
-    loan = current_circulation.machine.to_next(loan_created, **new_params)
+    loan = current_circulation.circulation.trigger(loan_created, **new_params)
     loan.validate()

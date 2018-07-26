@@ -9,7 +9,6 @@
 """Invenio module for the circulation of bibliographic items."""
 
 from .api import Loan
-from .transitions.base import CallableTransition, Transition
 from .transitions.transitions import ItemOnLoanToItemInTransitHouse, \
     ItemOnLoanToItemReturned, PendingToItemAtDesk, \
     PendingToItemInTransitPickup
@@ -18,38 +17,32 @@ from .utils import is_checkin_valid, is_checkout_valid, is_request_valid, \
 
 CIRCULATION_LOAN_TRANSITIONS = {
     'CREATED': [
-        CallableTransition(src='CREATED', dest='PENDING', trigger='request'),
-        CallableTransition(src='CREATED', dest='ITEM_ON_LOAN',
-                           trigger='checkout')
+        dict(dest='PENDING', trigger='request'),
+        dict(dest='ITEM_ON_LOAN', trigger='checkout')
     ],
     'PENDING': [
-        PendingToItemAtDesk(src='PENDING', dest='ITEM_AT_DESK'),
-        PendingToItemInTransitPickup(src='PENDING',
-                                     dest='ITEM_IN_TRANSIT_FOR_PICKUP'),
-        CallableTransition(src='PENDING', dest='CANCELLED',
-                           trigger='cancel')
+        dict(dest='ITEM_AT_DESK', transition=PendingToItemAtDesk),
+        dict(dest='ITEM_IN_TRANSIT_FOR_PICKUP',
+             transition=PendingToItemInTransitPickup),
+        dict(dest='CANCELLED', trigger='cancel')
     ],
     'ITEM_AT_DESK': [
-        Transition(src='ITEM_AT_DESK', dest='ITEM_ON_LOAN'),
-        CallableTransition(src='ITEM_AT_DESK', dest='CANCELLED',
-                           trigger='cancel')
+        dict(dest='ITEM_ON_LOAN'),
+        dict(dest='CANCELLED', trigger='cancel')
     ],
     'ITEM_IN_TRANSIT_FOR_PICKUP': [
-        Transition(src='ITEM_IN_TRANSIT_FOR_PICKUP', dest='ITEM_AT_DESK'),
-        CallableTransition(src='ITEM_IN_TRANSIT_FOR_PICKUP', dest='CANCELLED',
-                           trigger='cancel')
+        dict(dest='ITEM_AT_DESK'),
+        dict(dest='CANCELLED', trigger='cancel')
     ],
     'ITEM_ON_LOAN': [
-        ItemOnLoanToItemInTransitHouse(src='ITEM_ON_LOAN',
-                                       dest='ITEM_IN_TRANSIT_TO_HOUSE'),
-        ItemOnLoanToItemReturned(src='ITEM_ON_LOAN', dest='ITEM_RETURNED'),
-        CallableTransition(src='ITEM_ON_LOAN', dest='CANCELLED',
-                           trigger='cancel')
+        dict(dest='ITEM_RETURNED', transition=ItemOnLoanToItemReturned),
+        dict(dest='ITEM_IN_TRANSIT_TO_HOUSE',
+             transition=ItemOnLoanToItemInTransitHouse),
+        dict(dest='CANCELLED', trigger='cancel')
     ],
     'ITEM_IN_TRANSIT_TO_HOUSE': [
-        Transition(src='ITEM_IN_TRANSIT_TO_HOUSE', dest='ITEM_RETURNED'),
-        CallableTransition(src='ITEM_IN_TRANSIT_TO_HOUSE', dest='CANCELLED',
-                           trigger='cancel')
+        dict(dest='ITEM_RETURNED'),
+        dict(dest='CANCELLED', trigger='cancel')
     ],
     'ITEM_RETURNED': [],
     'CANCELLED': [],
@@ -57,9 +50,6 @@ CIRCULATION_LOAN_TRANSITIONS = {
 """."""
 
 CIRCULATION_LOAN_INITIAL_STATE = 'CREATED'
-"""."""
-
-CIRCULATION_TRANSITIONS_TRIGGER_NAME = 'trigger'
 """."""
 
 CIRCULATION_ITEM_LOCATION_RETRIEVER = item_location_retriever

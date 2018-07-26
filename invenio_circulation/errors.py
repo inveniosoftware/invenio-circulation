@@ -17,6 +17,10 @@ class CirculationException(Exception):
         self.msg = msg
 
 
+class InvalidState(CirculationException):
+    """State not found in circulation configuration."""
+
+
 class TransitionValidationFailed(CirculationException):
     """Transition validation failed."""
 

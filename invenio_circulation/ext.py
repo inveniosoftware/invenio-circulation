@@ -10,13 +10,15 @@
 
 from __future__ import absolute_import, print_function
 
+from copy import deepcopy
+
 from flask import current_app
 from werkzeug.utils import cached_property
 
-from invenio_circulation import config
-from invenio_circulation.errors import NoValidTransitionAvailable, \
+from . import config
+from .errors import InvalidState, NoValidTransitionAvailable, \
     TransitionValidationFailed
-from invenio_circulation.transitions.base import CallableTransition
+from .transitions.base import Transition
 
 
 class InvenioCirculation(object):
@@ -42,41 +44,41 @@ class InvenioCirculation(object):
                 app.config.setdefault(k, getattr(config, k))
 
     @cached_property
-    def machine(self):
+    def circulation(self):
         """."""
-        transitions = current_app.config['CIRCULATION_LOAN_TRANSITIONS']
-        return _Machine(transitions=transitions)
+        return _Circulation(transitions_config=deepcopy(current_app.config[
+            'CIRCULATION_LOAN_TRANSITIONS']))
 
 
-class _Machine(object):
+class _Circulation(object):
     """."""
 
-    def __init__(self, transitions):
+    def __init__(self, transitions_config):
         """."""
-        self.transitions = transitions
+        self.transitions = {}
+        for src_state, transitions in transitions_config.items():
+            self.transitions.setdefault(src_state, [])
+            for t in transitions:
+                _cls = t.pop('transition', Transition)
+                instance = _cls(**dict(t, src=src_state))
+                self.transitions[src_state].append(instance)
 
     def _validate_current_state(self, current_state):
         """."""
-        if not current_state or current_state not in self.transitions.keys():
-            raise Exception
+        if not current_state or current_state not in self.transitions:
+            raise InvalidState('Invalid loan state `{}`'.format(current_state))
 
-    def _get_transitions(self, current_state, trigger=None):
-        """."""
-        if trigger:
-            return [t for t in self.transitions[current_state] if
-                    isinstance(t, CallableTransition)]
-        return self.transitions[current_state]
-
-    def to_next(self, loan, **kwargs):
+    def trigger(self, loan, **kwargs):
         """."""
         current_state = loan.get('state')
         self._validate_current_state(current_state)
 
-        for t in self._get_transitions(current_state, kwargs.get('trigger')):
+        for t in self.transitions[current_state]:
             try:
                 t.execute(loan, **kwargs)
                 return loan
-            except TransitionValidationFailed:
+            except TransitionValidationFailed as ex:
+                current_app.logger.debug(ex.msg)
                 pass
 
         raise NoValidTransitionAvailable('No valid transition with current'

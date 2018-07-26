@@ -8,9 +8,10 @@
 
 """Invenio Circulation custom transitions."""
 
-from invenio_circulation.errors import TransitionValidationFailed
-from invenio_circulation.transitions.base import CallableTransition, \
-    Transition, is_pickup_at_same_library, should_item_be_returned
+from ..errors import TransitionValidationFailed
+from ..transitions.base import Transition
+from ..transitions.conditions import is_pickup_at_same_library, \
+    should_item_be_returned
 
 
 class PendingToItemAtDesk(Transition):
@@ -19,9 +20,13 @@ class PendingToItemAtDesk(Transition):
     def before(self, loan, **kwargs):
         """."""
         super(PendingToItemAtDesk, self).before(loan, **kwargs)
-        if not is_pickup_at_same_library(loan['item_pid'],
-                                         loan['pickup_location_pid']):
-            raise TransitionValidationFailed(msg='Pickup is not in the same library.')
+        if not is_pickup_at_same_library(
+            loan['item_pid'],
+            loan['pickup_location_pid']
+        ):
+            raise TransitionValidationFailed(
+                msg='Invalid transition to {0}: Pickup is not at the same '
+                    'library.'.format(self.dest))
 
 
 class PendingToItemInTransitPickup(Transition):
@@ -30,9 +35,13 @@ class PendingToItemInTransitPickup(Transition):
     def before(self, loan, **kwargs):
         """."""
         super(PendingToItemInTransitPickup, self).before(loan, **kwargs)
-        if is_pickup_at_same_library(loan['item_pid'],
-                                     loan['pickup_location_pid']):
-            raise TransitionValidationFailed(msg='Pickup in the same library.')
+        if is_pickup_at_same_library(
+            loan['item_pid'],
+            loan['pickup_location_pid']
+        ):
+            raise TransitionValidationFailed(
+                msg='Invalid transition to {0}: Pickup is at the same library.'
+                    .format(self.dest))
 
 
 class ItemOnLoanToItemInTransitHouse(Transition):
@@ -41,9 +50,13 @@ class ItemOnLoanToItemInTransitHouse(Transition):
     def before(self, loan, **kwargs):
         """."""
         super(ItemOnLoanToItemInTransitHouse, self).before(loan, **kwargs)
-        if should_item_be_returned(loan['item_pid'],
-                                   kwargs.get('transaction_location_pid')):
-            raise TransitionValidationFailed(msg='Item should be returned.')
+        if should_item_be_returned(
+            loan['item_pid'],
+            kwargs.get('transaction_location_pid')
+        ):
+            raise TransitionValidationFailed(
+                msg='Invalid transition to {0}: item should be returned.'
+                    .format(self.dest))
 
 
 class ItemOnLoanToItemReturned(Transition):
@@ -52,16 +65,22 @@ class ItemOnLoanToItemReturned(Transition):
     def before(self, loan, **kwargs):
         """."""
         super(ItemOnLoanToItemReturned, self).before(loan, **kwargs)
-        if not should_item_be_returned(loan['item_pid'],
-                                       kwargs.get('transaction_location_pid')):
-            raise TransitionValidationFailed(msg='Item should be in transit in house.')
+        if not should_item_be_returned(
+            loan['item_pid'],
+            kwargs.get('transaction_location_pid')
+        ):
+            raise TransitionValidationFailed(
+                msg='Invalid transition to {0}: item should be in transit to '
+                    'house.'.format(self.dest))
 
 
-class CreatedToPending(CallableTransition):
+class CreatedToPending(Transition):
     """."""
 
     def before(self, loan, **kwargs):
         """."""
         super(CreatedToPending, self).before(loan, **kwargs)
         if not kwargs.get('pickup_location_pid'):
-            raise TransitionValidationFailed(msg='Pickup location is required')
+            raise TransitionValidationFailed(
+                msg='Invalid transition to {0}: Pickup location is required'
+                    .format(self.dest))
