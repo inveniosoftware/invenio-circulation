@@ -137,7 +137,8 @@ class Transition(object):
             msg = "Item '{0}' not found in catalog".format(loan['item_pid'])
             raise ItemNotAvailableError(description=msg)
 
-        if not is_item_available_for_checkout(loan['item_pid']):
+        if not is_item_available_for_checkout(
+                loan['item_pid'], patron_pid=loan['patron_pid']):
             raise ItemNotAvailableError(
                 item_pid=loan['item_pid'], transition=self.dest
             )

@@ -447,11 +447,15 @@ def test_item_availability(indexed_loans):
     assert not is_item_available_for_checkout(item_pid="item_on_loan_2")
     assert is_item_available_for_checkout(item_pid="item_returned_3")
     assert not is_item_available_for_checkout(item_pid="item_in_transit_4")
-    assert not is_item_available_for_checkout(item_pid="item_at_desk_5")
     assert not is_item_available_for_checkout(
         item_pid="item_pending_on_loan_6")
     assert is_item_available_for_checkout(item_pid="item_returned_6")
     assert is_item_available_for_checkout(item_pid="no_loan")
+    # item is not available because it has a loan with state ITEM_AT_DESK
+    assert not is_item_available_for_checkout(item_pid="item_at_desk_5")
+    # item is available because the checked-out patron owns the active loan
+    assert is_item_available_for_checkout(
+        item_pid="item_at_desk_5", patron_pid="1")
 
 
 def test_checkout_item_unavailable_steps(loan_created,  params, users):
