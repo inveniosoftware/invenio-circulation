@@ -53,7 +53,7 @@ def _ensure_item_attached_to_loan(loan):
 
 def ensure_same_item(f):
     """Validate that the item PID exists and cannot be changed."""
-    def inner(self, loan, **kwargs):
+    def inner(self, loan, initial_loan, **kwargs):
         item_pid = kwargs.get("item_pid")
 
         if item_pid:
@@ -76,7 +76,7 @@ def ensure_same_item(f):
                 )
                 raise ItemDoNotMatchError(description=msg)
 
-        return f(self, loan, **kwargs)
+        return f(self, loan, initial_loan, **kwargs)
 
     return inner
 
@@ -137,29 +137,29 @@ def _ensure_default_pickup_location(loan, context):
 class ToItemOnLoan(Transition):
     """Action to checkout."""
 
-    def before(self, loan, **kwargs):
+    def before(self, loan, initial_loan, **kwargs):
         """Validate checkout action."""
-        super().before(loan, **kwargs)
+        super().before(loan, initial_loan, **kwargs)
 
         self.ensure_item_is_available_for_checkout(loan)
 
         _ensure_default_pickup_location(loan, kwargs)
 
-        _ensure_valid_loan_duration(loan, self.initial_loan)
+        _ensure_valid_loan_duration(loan, initial_loan)
 
 
 class ItemAtDeskToItemOnLoan(Transition):
     """Check-out action to perform a loan when item ready at desk."""
 
-    def before(self, loan, **kwargs):
+    def before(self, loan, initial_loan, **kwargs):
         """Validate checkout action."""
-        super().before(loan, **kwargs)
+        super().before(loan, initial_loan, **kwargs)
 
         self.ensure_at_desk_item_is_available_for_checkout(loan)
 
         _ensure_default_pickup_location(loan, kwargs)
 
-        _ensure_valid_loan_duration(loan, self.initial_loan)
+        _ensure_valid_loan_duration(loan, initial_loan)
 
     def ensure_at_desk_item_is_available_for_checkout(self, loan):
         """Validate that an item at desk is available for checkout."""
@@ -181,7 +181,7 @@ class ItemAtDeskToItemOnLoan(Transition):
 
 def check_request_on_document(f):
     """Decorator to check if the request is on document."""
-    def inner(self, loan, **kwargs):
+    def inner(self, loan, initial_loan, **kwargs):
         document_pid = kwargs.get("document_pid")
         if document_pid and not kwargs.get("item_pid"):
             if not can_be_requested(loan):
@@ -204,7 +204,7 @@ def check_request_on_document(f):
                 kwargs["item_pid"]
             )
 
-        return f(self, loan, **kwargs)
+        return f(self, loan, initial_loan, **kwargs)
     return inner
 
 
@@ -225,9 +225,9 @@ class CreatedToPending(Transition):
         self.assign_item = kwargs.get("assign_item", True)
 
     @check_request_on_document
-    def before(self, loan, **kwargs):
+    def before(self, loan, initial_loan, **kwargs):
         """Check if the loan request can be created."""
-        super().before(loan, **kwargs)
+        super().before(loan, initial_loan, **kwargs)
 
         if not can_be_requested(loan):
             msg = "Cannot create a request for the loan '{}'".format(loan)
@@ -237,9 +237,9 @@ class CreatedToPending(Transition):
 class PendingToItemAtDesk(Transition):
     """Validate pending request to prepare the item at desk of its location."""
 
-    def before(self, loan, **kwargs):
+    def before(self, loan, initial_loan, **kwargs):
         """Validate if the item is for this location or should transit."""
-        super().before(loan, **kwargs)
+        super().before(loan, initial_loan, **kwargs)
 
         # check if a request on document has no item attached
         _ensure_item_attached_to_loan(loan)
@@ -250,9 +250,9 @@ class PendingToItemAtDesk(Transition):
 class PendingToItemInTransitPickup(Transition):
     """Validate pending request to send the item to the pickup location."""
 
-    def before(self, loan, **kwargs):
+    def before(self, loan, initial_loan, **kwargs):
         """Validate if the item is for this location or should transit."""
-        super().before(loan, **kwargs)
+        super().before(loan, initial_loan, **kwargs)
 
         # check if a request on document has no item attached
         _ensure_item_attached_to_loan(loan)
@@ -278,12 +278,12 @@ class ItemOnLoanToItemOnLoan(Transition):
             )
         loan["extension_count"] = extension_count
 
-    def update_loan_end_date(self, loan):
+    def update_loan_end_date(self, loan, initial_loan):
         """Update the end date of the extended loan."""
         get_extension_duration_func = current_app.config[
             "CIRCULATION_POLICIES"
         ]["extension"]["duration_default"]
-        duration = get_extension_duration_func(loan, self.initial_loan)
+        duration = get_extension_duration_func(loan, initial_loan)
 
         should_extend_from_end_date = current_app.config[
             "CIRCULATION_POLICIES"
@@ -295,20 +295,20 @@ class ItemOnLoanToItemOnLoan(Transition):
         loan["end_date"] += duration
 
     @ensure_same_item
-    def before(self, loan, **kwargs):
+    def before(self, loan, initial_loan, **kwargs):
         """Validate extension action."""
-        super().before(loan, **kwargs)
+        super().before(loan, initial_loan, **kwargs)
         self.update_extension_count(loan)
-        self.update_loan_end_date(loan)
+        self.update_loan_end_date(loan, initial_loan)
 
 
 class ItemOnLoanToItemInTransitHouse(Transition):
     """Check-in action when returning an item not to its belonging location."""
 
     @ensure_same_item
-    def before(self, loan, **kwargs):
+    def before(self, loan, initial_loan, **kwargs):
         """Validate check-in action."""
-        super().before(loan, **kwargs)
+        super().before(loan, initial_loan, **kwargs)
 
         _ensure_not_same_location(
             loan["item_pid"],
@@ -335,9 +335,9 @@ class ItemOnLoanToItemReturned(Transition):
         self.assign_item = kwargs.get("assign_item", True)
 
     @ensure_same_item
-    def before(self, loan, **kwargs):
+    def before(self, loan, initial_loan, **kwargs):
         """Validate check-in action."""
-        super().before(loan, **kwargs)
+        super().before(loan, initial_loan, **kwargs)
         _ensure_same_location(
             loan["item_pid"],
             loan["transaction_location_pid"],
@@ -348,9 +348,9 @@ class ItemOnLoanToItemReturned(Transition):
         # set end loan date as transaction date when completing loan
         loan["end_date"] = loan["transaction_date"]
 
-    def after(self, loan):
+    def after(self, loan, initial_loan):
         """Check for pending requests on this item after check-in."""
-        super().after(loan)
+        super().after(loan, initial_loan)
         if self.assign_item:
             _update_document_pending_request_for_item(loan["item_pid"])
 
@@ -372,9 +372,9 @@ class ItemInTransitHouseToItemReturned(Transition):
         self.assign_item = kwargs.get("assign_item", True)
 
     @ensure_same_item
-    def before(self, loan, **kwargs):
+    def before(self, loan, initial_loan, **kwargs):
         """Validate check-in action."""
-        super().before(loan, **kwargs)
+        super().before(loan, initial_loan, **kwargs)
 
         _ensure_same_location(
             loan["item_pid"],
@@ -383,9 +383,9 @@ class ItemInTransitHouseToItemReturned(Transition):
             error_msg="Item should be in transit to house.",
         )
 
-    def after(self, loan):
+    def after(self, loan, initial_loan):
         """Check for pending requests on this item after check-in."""
-        super().after(loan)
+        super().after(loan, initial_loan)
         if self.assign_item:
             _update_document_pending_request_for_item(loan["item_pid"])
 
@@ -394,6 +394,6 @@ class ToCancelled(Transition):
     """When cancelling a loan, ensure that the item is not changed."""
 
     @ensure_same_item
-    def before(self, loan, **kwargs):
+    def before(self, loan, initial_loan, **kwargs):
         """Validate cancel action."""
-        super().before(loan, **kwargs)
+        super().before(loan, initial_loan, **kwargs)

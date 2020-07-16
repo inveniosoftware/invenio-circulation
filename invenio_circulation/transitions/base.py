@@ -124,7 +124,6 @@ class Transition(object):
         self.src = src
         self.dest = dest
         self.trigger = trigger
-        self.initial_loan = None
         default_perm = current_app.config[
             "CIRCULATION_LOAN_TRANSITIONS_DEFAULT_PERMISSION_FACTORY"
         ]
@@ -166,9 +165,8 @@ class Transition(object):
                 if type(kwargs[field]) is not datetime:
                     kwargs[field] = str2datetime(kwargs[field])
 
-    def before(self, loan, **kwargs):
+    def before(self, loan, initial_loan, **kwargs):
         """Validate input, evaluate conditions and raise if failed."""
-        self.initial_loan = copy.deepcopy(loan)
         loan.update(kwargs)
         loan.setdefault("transaction_date", arrow.utcnow())
 
@@ -182,13 +180,15 @@ class Transition(object):
         self._date_fields2datetime(kwargs)
         loan.date_fields2datetime()
 
-        self.before(loan, **kwargs)
-        loan["state"] = self.dest
-        self.after(loan)
+        initial_loan = copy.deepcopy(loan)
 
-    def after(self, loan):
+        self.before(loan, initial_loan, **kwargs)
+        loan["state"] = self.dest
+        self.after(loan, initial_loan)
+
+    def after(self, loan, initial_loan):
         """Commit record and index."""
-        self.initial_loan.date_fields2str()
+        initial_loan.date_fields2str()
         loan.date_fields2str()
 
         loan.commit()
@@ -197,7 +197,7 @@ class Transition(object):
 
         loan_state_changed.send(
             self,
-            initial_loan=self.initial_loan,
+            initial_loan=initial_loan,
             loan=loan,
             trigger=self.trigger,
         )
