@@ -7,6 +7,11 @@
 Changes
 =======
 
+Version 1.0.0a26 (released 2020-07-17)
+
+- fixes `initial_loan`, a copy of loan before transition, to be a local
+  variable instead of a Transition object property.
+
 Version 1.0.0a25 (released 2020-06-18)
 
 - adds config CIRCULATION_LOAN_LOCATIONS_VALIDATION to allow validation
