@@ -15,7 +15,7 @@ from flask import current_app
 from flask_babelex import lazy_gettext as _
 from invenio_records_rest.schemas import RecordMetadataSchemaJSONV1
 from invenio_records_rest.schemas.fields import PersistentIdentifier
-from marshmallow import Schema, ValidationError, fields, validates
+from marshmallow import Schema, ValidationError, fields, post_load, validates
 
 
 class DateTimeString(fields.DateTime):
@@ -119,6 +119,16 @@ class LoanSchemaV1(RecordMetadataSchemaJSONV1):
                 _("The loan `transaction_user_pid` is not valid."),
                 field_names=["transaction_user_pid"],
             )
+
+    @post_load
+    def postload_fields(self, data, **kwargs):
+        """Post-load record fields update."""
+        record = self.context.get("record")
+        if record:
+            record.update(data)
+            return record
+        else:
+            return data
 
 
 class LoanReplaceItemSchemaV1(RecordMetadataSchemaJSONV1):
