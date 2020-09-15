@@ -7,6 +7,10 @@
 Changes
 =======
 
+Version 1.0.0a27 (released 2020-09-15)
+
+- fixes the loan record update method not working properly with custom fields
+
 Version 1.0.0a26 (released 2020-07-17)
 
 - fixes `initial_loan`, a copy of loan before transition, to be a local
