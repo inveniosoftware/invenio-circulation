@@ -16,26 +16,16 @@ readme = open('README.rst').read()
 history = open('CHANGES.rst').read()
 
 tests_require = [
-    'check-manifest>=0.35',
-    'coverage>=4.5.3',
-    'isort>=4.3.11',
     'invenio-app>=1.2.3',
     'invenio-jsonschemas>=1.0.1',
     'mock>=1.3.0',
-    'pydocstyle>=3.0.0',
-    'pytest-cov>=2.7.1',
-    'pytest-pep8>=1.0.6',
-    'pytest>=4.6.4,<5.0.0',
-    'pytest-invenio>=1.2.1',
+    'pytest-invenio>=1.4.0',
 ]
 
 invenio_search_version = '1.2.3'
 invenio_db_version = '1.0.4'
 
 extras_require = {
-    'elasticsearch5': [
-        'invenio-search[elasticsearch5]>={}'.format(invenio_search_version)
-    ],
     'elasticsearch6': [
         'invenio-search[elasticsearch6]>={}'.format(invenio_search_version)
     ],
@@ -43,7 +33,7 @@ extras_require = {
         'invenio-search[elasticsearch7]>={}'.format(invenio_search_version),
     ],
     'docs': [
-        'Sphinx>=1.8.4,<3'
+        'Sphinx>=3'
     ],
     'mysql': [
         'invenio-db[mysql,versioning]>={}'.format(invenio_db_version)
@@ -63,18 +53,17 @@ for name, reqs in extras_require.items():
         'mysql',
         'postgresql',
         'sqlite',
-        'elasticsearch5',
         'elasticsearch6',
         'elasticsearch7',
     ):
         continue
     extras_require['all'].extend(reqs)
 
-setup_requires = ['Babel>=1.3', 'pytest-runner>=2.6.2']
+setup_requires = ['Babel>=2.8']
 
 install_requires = [
     'arrow>=0.15.0',
-    'invenio-base>=1.2.1',
+    'invenio-base>=1.2.3',
     'invenio-access>=1.3.1',
     'invenio-logging>=1.2.1',
     'invenio-pidstore>=1.1.0',
@@ -96,7 +85,7 @@ setup(
     version=version,
     description=__doc__,
     long_description=readme + '\n\n' + history,
-    keywords='invenio TODO',
+    keywords='invenio',
     license='MIT',
     author='CERN',
     author_email='info@inveniosoftware.org',
@@ -153,6 +142,9 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
         'Development Status :: 1 - Planning',
     ],
 )

@@ -8,8 +8,6 @@
 
 """Invenio module for the circulation of bibliographic items."""
 
-from __future__ import absolute_import, print_function
-
 from copy import deepcopy
 
 from flask import current_app
