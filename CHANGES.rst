@@ -7,6 +7,13 @@
 Changes
 =======
 
+Version 1.0.0a28 (released 2020-10-09)
+
+- fixes how the overridden records REST endpoint configuration was retrieved
+  in the loan actions and replace item custom endpoints.
+- removes support for Elasticsearch 5
+- adds support for Python 3.7 and 3.8
+
 Version 1.0.0a27 (released 2020-09-15)
 
 - fixes the loan record update method not working properly with custom fields
