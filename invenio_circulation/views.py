@@ -47,8 +47,8 @@ def build_url_action_for_pid(pid, action):
 
 def _get_loan_endpoint_options(app):
     """Return the configured endpoint options."""
-    endpoints = app.config.get("CIRCULATION_REST_ENDPOINTS", [])
-    options = deepcopy(endpoints.get(CIRCULATION_LOAN_PID_TYPE, {}))
+    endpoints = app.config["RECORDS_REST_ENDPOINTS"]
+    options = deepcopy(endpoints[CIRCULATION_LOAN_PID_TYPE])
     default_media_type = options.get("default_media_type", "")
     rec_serializers = options.get("record_serializers", {})
     serializers = {
