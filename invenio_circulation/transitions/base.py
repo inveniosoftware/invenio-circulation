@@ -12,7 +12,7 @@ import copy
 from datetime import datetime
 
 import arrow
-from flask import current_app
+from flask import current_app, has_request_context
 from invenio_db import db
 
 from ..api import Loan, is_item_available_for_checkout
@@ -86,6 +86,10 @@ def ensure_required_params(f):
 def has_permission(f):
     """Decorator to check the transition should be manually triggered."""
     def inner(self, loan, **kwargs):
+        if not has_request_context():
+            # no request context: a transition can be triggered via CLI
+            return f(self, loan, **kwargs)
+
         if self.permission_factory and not self.permission_factory(loan).can():
             raise InvalidPermissionError(
                 permission=self.permission_factory(loan)
