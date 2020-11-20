@@ -133,7 +133,7 @@ def test_created_to_item_on_loan_available_item_with_valid_duration(
     assert loan["state"] == "ITEM_ON_LOAN"
     assert loan["pickup_location_pid"] == "pickup_location_pid"
     assert loan["item_pid"] == dict(type="itemid", value="item_pid")
-    assert loan["transaction_date"] == params["transaction_date"].isoformat()
+    assert loan["transaction_date"] >= params["transaction_date"].isoformat()
 
 
 def test_pending_to_item_on_loan_available_item(

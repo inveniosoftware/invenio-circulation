@@ -26,27 +26,6 @@ from invenio_circulation.utils import str2datetime
 from .helpers import SwappedConfig, SwappedNestedConfig
 
 
-def test_override_transaction_date(
-    mock_get_pending_loans_by_doc_pid,
-    loan_created,
-    params,
-    mock_is_item_available_for_checkout,
-):
-    """Test override transaction date."""
-    mock_get_pending_loans_by_doc_pid.return_value = []
-    mock_is_item_available_for_checkout.return_value = True
-    assert loan_created["state"] == "CREATED"
-
-    expected_transaction_date = arrow.utcnow() + timedelta(days=10)
-    params["transaction_date"] = expected_transaction_date
-
-    loan = current_circulation.circulation.trigger(
-        loan_created, **dict(params, trigger="checkout")
-    )
-    assert loan["state"] == "ITEM_ON_LOAN"
-    assert loan["transaction_date"] == expected_transaction_date.isoformat()
-
-
 def test_loan_checkout_checkin(
     mock_get_pending_loans_by_doc_pid,
     loan_created,
@@ -524,8 +503,7 @@ def test_item_availability(indexed_loans):
     )
     # item is available because the checked-out patron owns the active loan
     assert is_item_at_desk_available_for_checkout(
-            item_pid=dict(type="itemid", value="item_at_desk_5"),
-            patron_pid="1"
+        item_pid=dict(type="itemid", value="item_at_desk_5"), patron_pid="1"
     )
 
 

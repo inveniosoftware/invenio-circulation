@@ -172,7 +172,7 @@ class Transition(object):
     def before(self, loan, initial_loan, **kwargs):
         """Validate input, evaluate conditions and raise if failed."""
         loan.update(kwargs)
-        loan.setdefault("transaction_date", arrow.utcnow())
+        loan["transaction_date"] = arrow.utcnow()
 
     @check_trigger
     @has_permission
