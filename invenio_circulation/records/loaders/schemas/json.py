@@ -30,8 +30,8 @@ class DateTimeString(fields.DateTime):
         """Validate that the passed timezone, if any, is UTC."""
         # strong validation of input datetime to require UTC timezone
         if (
-            arrow.get(value).isoformat() !=
-            arrow.get(value).to("utc").isoformat()
+            arrow.get(value).isoformat()
+            != arrow.get(value).to("utc").isoformat()
         ):
             raise ValidationError(_("Not a valid ISO-8601 UTC datetime."))
 
@@ -92,12 +92,12 @@ class LoanSchemaV1(RecordMetadataSchemaJSONV1):
     request_expire_date = DateString()
     request_start_date = DateString()
     start_date = DateString()
-    transaction_date = DateTimeString()
+    transaction_date = DateTimeString(missing=arrow.utcnow().isoformat())
     transaction_location_pid = fields.Str(required=True)
     transaction_user_pid = fields.Str(required=True)
 
     @validates("transaction_location_pid")
-    def validate_transaction_location_pid(self, value,  **kwargs):
+    def validate_transaction_location_pid(self, value, **kwargs):
         """Validate transaction_location_pid field."""
         transaction_location_is_valid = current_app.config[
             "CIRCULATION_TRANSACTION_LOCATION_VALIDATOR"
