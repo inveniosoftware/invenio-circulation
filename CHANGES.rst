@@ -7,6 +7,10 @@
 Changes
 =======
 
+Version 1.0.0a29 (released 2020-11-26)
+
+- set transaction date default value in marshamallow loader to fix bug with start date
+
 Version 1.0.0a28 (released 2020-10-09)
 
 - fixes how the overridden records REST endpoint configuration was retrieved
