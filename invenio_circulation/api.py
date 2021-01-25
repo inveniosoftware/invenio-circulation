@@ -37,7 +37,6 @@ class Loan(Record):
         """Constructor."""
         self.item_ref_builder = current_app.config[
             "CIRCULATION_ITEM_REF_BUILDER"]
-        self["state"] = current_app.config["CIRCULATION_LOAN_INITIAL_STATE"]
         super().__init__(data, model)
 
     @classmethod
@@ -54,6 +53,8 @@ class Loan(Record):
     def create(cls, data, id_=None, **kwargs):
         """Create Loan record."""
         data["$schema"] = current_jsonschemas.path_to_url(cls._schema)
+        data.setdefault("state",
+                        current_app.config["CIRCULATION_LOAN_INITIAL_STATE"])
         cls.build_resolver_fields(data)
 
         # resolve document if `item_pid` provided

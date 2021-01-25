@@ -41,10 +41,12 @@ def test_loan_replace_item(app, json_headers, indexed_loans):
 
 def test_loan_replace_item_inactive_state(app, json_headers, indexed_loans):
     """Test item replacement on a Loan that is not active."""
+    loan = None
     for _pid, _loan in indexed_loans:
         if _loan["state"] == "ITEM_RETURNED":
             loan = _loan
             break
+    assert loan
     payload = dict(item_pid=dict(type="itemid", value="new_item_pid"))
     res, data = _post(app, json_headers, loan, payload)
     assert data["status"] == 400
