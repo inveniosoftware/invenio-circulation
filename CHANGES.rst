@@ -7,6 +7,10 @@
 Changes
 =======
 
+Version 1.0.0a30 (released 2021-01-27)
+
+- fix default loan state assignment
+
 Version 1.0.0a29 (released 2020-11-26)
 
 - set transaction date default value in marshamallow loader to fix bug with start date
