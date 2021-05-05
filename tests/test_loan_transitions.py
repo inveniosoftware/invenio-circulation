@@ -481,17 +481,17 @@ def test_checkin_end_date_is_transaction_date(
     )
     assert loan["state"] == "ITEM_ON_LOAN"
     assert loan["transaction_date"]
-    transaction_date = loan["transaction_date"]
 
     same_location = params["transaction_location_pid"]
     params["transaction_date"] = arrow.utcnow()
+    new_transaction_date = params["transaction_date"]
     with SwappedConfig(
         "CIRCULATION_ITEM_LOCATION_RETRIEVER", lambda x: same_location
     ):
         loan = current_circulation.circulation.trigger(loan, **dict(params))
 
     assert loan["state"] == "ITEM_RETURNED"
-    expected_end_date = str2datetime(transaction_date).date().isoformat()
+    expected_end_date = str2datetime(new_transaction_date).date().isoformat()
     assert loan["end_date"] == expected_end_date
 
 
