@@ -7,6 +7,10 @@
 Changes
 =======
 
+Version 1.0.0a31 (released 2021-05-05)
+
+- fix default transaction date on loan loader
+
 Version 1.0.0a30 (released 2021-01-27)
 
 - fix default loan state assignment
