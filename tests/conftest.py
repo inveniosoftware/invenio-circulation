@@ -46,6 +46,8 @@ def app_config(app_config):
     """Flask application fixture."""
     app_config["JSONSCHEMAS_ENDPOINT"] = "/schema"
     app_config["JSONSCHEMAS_HOST"] = "localhost:5000"
+    app_config["SQLALCHEMY_DATABASE_URI"] = \
+        "postgresql+psycopg2://invenio:invenio@localhost/invenio"
     app_config["RECORDS_REST_DEFAULT_READ_PERMISSION_FACTORY"] = allow_all
     app_config["CIRCULATION_ITEM_EXISTS"] = item_exists
     app_config["CIRCULATION_DOCUMENT_EXISTS"] = document_exists
@@ -191,6 +193,11 @@ def mock_ensure_item_is_available_for_checkout():
 @pytest.fixture()
 def users(db, base_app):
     """Create admin, manager and user."""
+    # with Postgresql, when dropping the User table, the sequence is not
+    # automatically reset to 1, causing issues with the tests demo data.
+    db.session.execute("ALTER SEQUENCE IF EXISTS accounts_user_id_seq RESTART")
+    db.session.commit()
+
     base_app.config[
         "CIRCULATION_VIEWS_PERMISSIONS_FACTORY"
     ] = test_views_permissions_factory

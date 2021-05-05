@@ -17,7 +17,7 @@ history = open('CHANGES.rst').read()
 
 tests_require = [
     "mock>=2.0.0",
-    "pytest-invenio>=1.4.0,<1.5.0",
+    "pytest-invenio>=1.4.1,<1.5.0",
     "pytest-mock>=1.6.0",
     "celery[pytest]>=4.4.0,<5.1",  # Temporary, until fixed in `pytest-invenio`
     'invenio-app>=1.2.3',
@@ -25,7 +25,7 @@ tests_require = [
 ]
 
 invenio_search_version = '1.2.3'
-invenio_db_version = '1.0.4'
+invenio_db_version = '1.0.9'
 
 extras_require = {
     'elasticsearch6': [
