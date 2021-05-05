@@ -18,6 +18,11 @@ from invenio_records_rest.schemas.fields import PersistentIdentifier
 from marshmallow import Schema, ValidationError, fields, post_load, validates
 
 
+def set_missing_transaction_date():
+    """Set missing transaction date dynamically."""
+    return arrow.utcnow().isoformat()
+
+
 class DateTimeString(fields.DateTime):
     """Custom DateTime field to return a string representation."""
 
@@ -92,7 +97,7 @@ class LoanSchemaV1(RecordMetadataSchemaJSONV1):
     request_expire_date = DateString()
     request_start_date = DateString()
     start_date = DateString()
-    transaction_date = DateTimeString(missing=arrow.utcnow().isoformat())
+    transaction_date = DateTimeString(missing=set_missing_transaction_date)
     transaction_location_pid = fields.Str(required=True)
     transaction_user_pid = fields.Str(required=True)
 
