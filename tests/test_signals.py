@@ -15,8 +15,8 @@ def test_signals_loan_request(loan_created, params):
     """Test signal for loan request action."""
     recorded = []
 
-    def record_signals(_, initial_loan, loan, trigger):
-        recorded.append((initial_loan, loan, trigger))
+    def record_signals(_, initial_loan, loan, trigger, **kwargs):
+        recorded.append((initial_loan, loan, trigger, kwargs))
 
     loan_state_changed.connect(record_signals, weak=False)
 
@@ -30,7 +30,7 @@ def test_signals_loan_request(loan_created, params):
         )
     )
     assert len(recorded) == 1
-    initial_loan, updated_loan, trigger = recorded.pop()
+    initial_loan, updated_loan, trigger, kwargs = recorded.pop()
     assert initial_loan["state"] == "CREATED"
     assert updated_loan["state"] == "PENDING"
     assert trigger == "request"
@@ -40,8 +40,8 @@ def test_signals_loan_extend(loan_created, params):
     """Test signals for loan extend action."""
     recorded = []
 
-    def record_signals(_, initial_loan, loan, trigger):
-        recorded.append((initial_loan, loan, trigger))
+    def record_signals(_, initial_loan, loan, trigger, **kwargs):
+        recorded.append((initial_loan, loan, trigger, kwargs))
 
     loan_state_changed.connect(record_signals, weak=False)
 
@@ -50,7 +50,7 @@ def test_signals_loan_extend(loan_created, params):
         loan_created, **dict(params, trigger="checkout")
     )
     assert len(recorded) == 1
-    initial_loan, updated_loan, trigger = recorded.pop()
+    initial_loan, updated_loan, trigger, kwargs = recorded.pop()
     assert initial_loan["state"] == "CREATED"
     assert updated_loan["state"] == "ITEM_ON_LOAN"
     assert trigger == "checkout"
@@ -59,7 +59,7 @@ def test_signals_loan_extend(loan_created, params):
         loan, **dict(params, trigger="extend")
     )
     assert len(recorded) == 1
-    initial_loan, updated_loan, trigger = recorded.pop()
+    initial_loan, updated_loan, trigger, kwargs = recorded.pop()
     assert initial_loan["state"] == "ITEM_ON_LOAN"
     assert updated_loan["state"] == "ITEM_ON_LOAN"
     assert initial_loan["end_date"] != updated_loan["end_date"]
