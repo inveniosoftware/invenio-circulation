@@ -20,12 +20,13 @@ tests_require = [
     "pytest-invenio>=1.4.1,<1.5.0",
     "pytest-mock>=1.6.0",
     "celery[pytest]>=4.4.0,<5.1",  # Temporary, until fixed in `pytest-invenio`
-    'invenio-app>=1.2.3',
+    'invenio-app>=1.3.1',
     'invenio-jsonschemas>=1.0.1',
+    'Flask>=1.1.0,<2.0.0',
 ]
 
-invenio_search_version = '1.2.3'
-invenio_db_version = '1.0.9'
+invenio_db_version = "1.0.9,<1.1.0"
+invenio_search_version = "1.3.1,<1.4.0"
 
 extras_require = {
     'elasticsearch6': [
@@ -33,9 +34,11 @@ extras_require = {
     ],
     'elasticsearch7': [
         'invenio-search[elasticsearch7]>={}'.format(invenio_search_version),
+        # unsupported ES version issue
+        'elasticsearch>=7.0.0,<7.14',
     ],
     'docs': [
-        'Sphinx>=3'
+        'Sphinx>=3.3.1,<3.4',
     ],
     'mysql': [
         'invenio-db[mysql,versioning]>={}'.format(invenio_db_version)
@@ -65,7 +68,7 @@ setup_requires = ['Babel>=2.8']
 
 install_requires = [
     'arrow>=0.15.0',
-    'invenio-base>=1.2.3',
+    'invenio-base>=1.2.4',
     'invenio-access>=1.3.1',
     'invenio-logging>=1.2.1',
     'invenio-pidstore>=1.1.0',
