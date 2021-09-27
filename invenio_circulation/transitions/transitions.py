@@ -348,7 +348,7 @@ class ItemOnLoanToItemReturned(Transition):
         # set end loan date as transaction date when completing loan
         loan["end_date"] = loan["transaction_date"]
 
-    def after(self, loan, initial_loan):
+    def after(self, loan, initial_loan, **kwargs):
         """Check for pending requests on this item after check-in."""
         super().after(loan, initial_loan)
         if self.assign_item:
@@ -383,7 +383,7 @@ class ItemInTransitHouseToItemReturned(Transition):
             error_msg="Item should be in transit to house.",
         )
 
-    def after(self, loan, initial_loan):
+    def after(self, loan, initial_loan, **kwargs):
         """Check for pending requests on this item after check-in."""
         super().after(loan, initial_loan)
         if self.assign_item:

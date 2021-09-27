@@ -169,7 +169,7 @@ class Transition(object):
                 if type(kwargs[field]) is not datetime:
                     kwargs[field] = str2datetime(kwargs[field])
 
-    def before(self, loan, initial_loan, **kwargs):
+    def before(self, loan, initial_loan, transition_kwargs=None, **kwargs):
         """Validate input, evaluate conditions and raise if failed."""
         loan.update(kwargs)
         loan.setdefault("transaction_date", arrow.utcnow())
@@ -179,24 +179,27 @@ class Transition(object):
     @ensure_required_params
     @ensure_same_document
     @ensure_same_patron
-    def execute(self, loan, **kwargs):
+    def execute(self, loan, transition_kwargs=None, **kwargs):
         """Execute before actions, transition and after actions."""
         self._date_fields2datetime(kwargs)
         loan.date_fields2datetime()
 
         initial_loan = copy.deepcopy(loan)
 
-        self.before(loan, initial_loan, **kwargs)
+        self.before(loan, initial_loan, transition_kwargs=transition_kwargs,
+                    **kwargs)
         loan["state"] = self.dest
-        self.after(loan, initial_loan)
+        self.after(loan, initial_loan, transition_kwargs=transition_kwargs,
+                   **kwargs)
 
-    def after(self, loan, initial_loan):
+    def after(self, loan, initial_loan, transition_kwargs=None, **kwargs):
         """Commit record and index."""
         initial_loan.date_fields2str()
         loan.date_fields2str()
 
         loan.commit()
         db.session.commit()
+
         current_circulation.loan_indexer().index(loan)
 
         loan_state_changed.send(
@@ -204,4 +207,5 @@ class Transition(object):
             initial_loan=initial_loan,
             loan=loan,
             trigger=self.trigger,
+            kwargs=transition_kwargs,
         )
