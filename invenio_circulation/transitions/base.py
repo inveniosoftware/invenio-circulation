@@ -194,6 +194,8 @@ class Transition(object):
 
     def after(self, loan, initial_loan, transition_kwargs=None, **kwargs):
         """Commit record and index."""
+        transition_kwargs = transition_kwargs or {}
+
         initial_loan.date_fields2str()
         loan.date_fields2str()
 
@@ -207,5 +209,5 @@ class Transition(object):
             initial_loan=initial_loan,
             loan=loan,
             trigger=self.trigger,
-            kwargs=transition_kwargs,
+            **transition_kwargs,
         )
