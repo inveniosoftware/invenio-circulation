@@ -7,6 +7,13 @@
 Changes
 =======
 
+Version 1.0.0a32 (released 2021-09-30)
+
+- update dependencies
+- add additional kwargs to transition after method
+- add additional kwargs to after transition signal
+
+
 Version 1.0.0a31 (released 2021-05-05)
 
 - fix default transaction date on loan loader
