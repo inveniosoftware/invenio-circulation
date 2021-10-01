@@ -7,6 +7,10 @@
 Changes
 =======
 
+Version 1.0.0a33 (released 2021-09-30)
+
+- transition kwargs : change signature in signal
+
 Version 1.0.0a32 (released 2021-09-30)
 
 - update dependencies
