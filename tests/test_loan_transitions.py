@@ -70,10 +70,14 @@ def test_loan_checkout_checkin(
     with SwappedConfig(
         "CIRCULATION_ITEM_LOCATION_RETRIEVER", lambda x: same_location
     ):
-        loan = current_circulation.circulation.trigger(loan, **dict(params))
-        assert loan["state"] == "ITEM_RETURNED"
-        # Keep changes in database to make item available for checkout later
-        db.session.commit()
+        with SwappedConfig(
+                "CIRCULATION_SAME_LOCATION_VALIDATOR", lambda x, y: True):
+            loan = current_circulation.circulation.trigger(
+                loan, **dict(params))
+            assert loan["state"] == "ITEM_RETURNED"
+            # Keep changes in database to make item available for checkout
+            # later
+            db.session.commit()
 
 
 def test_can_change_item_and_loc_pid_before_checkout(
@@ -488,7 +492,10 @@ def test_checkin_end_date_is_transaction_date(
     with SwappedConfig(
         "CIRCULATION_ITEM_LOCATION_RETRIEVER", lambda x: same_location
     ):
-        loan = current_circulation.circulation.trigger(loan, **dict(params))
+        with SwappedConfig(
+                "CIRCULATION_SAME_LOCATION_VALIDATOR", lambda x, y: True):
+            loan = current_circulation.circulation.trigger(
+                loan, **dict(params))
 
     assert loan["state"] == "ITEM_RETURNED"
     expected_end_date = str2datetime(new_transaction_date).date().isoformat()

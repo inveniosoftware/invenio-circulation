@@ -99,3 +99,15 @@ def validate_item_pickup_transaction_locations(loan, destination, **kwargs):
         return pickup_location_pid == item_location_pid
     elif destination == "ITEM_IN_TRANSIT_FOR_PICKUP":
         return pickup_location_pid != item_location_pid
+
+
+def same_location_validator(item_pid, location_pid):
+    """Validates location of given item_pid and given location are the same.
+
+    :param item_pid: a dict containing `value` and `type` fields to
+        uniquely identify the item.
+    :param location_pid: a location pid.
+    :return: False if validation is not possible, otherwise True
+    """
+    item_location_pid = item_location_retriever(item_pid)
+    return location_pid == item_location_pid

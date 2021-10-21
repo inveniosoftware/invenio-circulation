@@ -20,7 +20,6 @@ from ..errors import ItemDoNotMatchError, ItemNotAvailableError, \
     LoanMaxExtensionError, RecordCannotBeRequestedError, \
     TransitionConditionsFailedError, TransitionConstraintsViolationError
 from ..transitions.base import Transition
-from ..transitions.conditions import is_same_location
 
 
 def _ensure_valid_loan_duration(loan, initial_loan):
@@ -95,16 +94,29 @@ def _update_document_pending_request_for_item(item_pid, **kwargs):
         current_circulation.loan_indexer().index(pending_loan)
 
 
+def _is_same_location(item_pid, location_pid):
+    """Validates location of given item_pid and given location are the same.
+
+    :param item_pid: a dict containing `value` and `type` fields to
+        uniquely identify the item.
+    :param location_pid: a location pid.
+    :return: False if validation is not possible, otherwise True
+    """
+    return current_app.config[
+            "CIRCULATION_SAME_LOCATION_VALIDATOR"
+        ](item_pid, location_pid)
+
+
 def _ensure_same_location(item_pid, location_pid, destination, error_msg):
     """Validate that item location is same as given location."""
-    if not is_same_location(item_pid, location_pid):
+    if not _is_same_location(item_pid, location_pid):
         error_msg += " Transition to '{}' has failed.".format(destination)
         raise TransitionConditionsFailedError(description=error_msg)
 
 
 def _ensure_not_same_location(item_pid, location_pid, destination, error_msg):
     """Validate that item location is not the same as given location."""
-    if is_same_location(item_pid, location_pid):
+    if _is_same_location(item_pid, location_pid):
         error_msg += " Transition to '{}' has failed.".format(destination)
         raise TransitionConditionsFailedError(description=error_msg)
 
