@@ -120,53 +120,57 @@ def test_auto_assignment_of_returned_item_to_pending_document_requests(
         with SwappedConfig(
             "CIRCULATION_ITEM_LOCATION_RETRIEVER", lambda x: "loc_pid"
         ):
-            # start a loan on item with pid 'item_pid'
-            new_loan = current_circulation.circulation.trigger(
-                loan_created,
-                **dict(
-                    params,
-                    trigger="checkout",
-                    item_pid=dict(type="itemid", value="item_pid"),
-                    pickup_location_pid="loc_pid",
+            with SwappedConfig(
+                    "CIRCULATION_SAME_LOCATION_VALIDATOR", lambda x, y: True):
+                # start a loan on item with pid 'item_pid'
+                new_loan = current_circulation.circulation.trigger(
+                    loan_created,
+                    **dict(
+                        params,
+                        trigger="checkout",
+                        item_pid=dict(type="itemid", value="item_pid"),
+                        pickup_location_pid="loc_pid",
+                    )
                 )
-            )
-            assert new_loan["state"] == "ITEM_ON_LOAN"
+                assert new_loan["state"] == "ITEM_ON_LOAN"
 
-            # create a new loan request on document_pid without items available
-            new_loan_created = Loan.create({"pid": "2"})
-            # remove item_pid
-            params.pop("item_pid")
-            pending_loan = current_circulation.circulation.trigger(
-                new_loan_created,
-                **dict(
-                    params,
-                    trigger="request",
-                    document_pid="document_pid",
-                    pickup_location_pid="loc_pid",
+                # create a new loan request on document_pid without items
+                # available
+                new_loan_created = Loan.create({"pid": "2"})
+                # remove item_pid
+                params.pop("item_pid")
+                pending_loan = current_circulation.circulation.trigger(
+                    new_loan_created,
+                    **dict(
+                        params,
+                        trigger="request",
+                        document_pid="document_pid",
+                        pickup_location_pid="loc_pid",
+                    )
                 )
-            )
-            assert pending_loan["state"] == "PENDING"
-            # no item available found. Request is created with no item attached
-            assert "item_pid" not in pending_loan
-            assert pending_loan["document_pid"] == "document_pid"
+                assert pending_loan["state"] == "PENDING"
+                # no item available found. Request is created with no item
+                # attached
+                assert "item_pid" not in pending_loan
+                assert pending_loan["document_pid"] == "document_pid"
 
-            # resolve pending document requests to `document_pid`
-            mock_get_pending_loans_by_doc_pid.return_value = [pending_loan]
+                # resolve pending document requests to `document_pid`
+                mock_get_pending_loans_by_doc_pid.return_value = [pending_loan]
 
-            returned_loan = current_circulation.circulation.trigger(
-                new_loan,
-                **dict(
-                    params,
-                    item_pid=dict(type="itemid", value="item_pid"),
-                    pickup_location_pid="loc_pid",
+                returned_loan = current_circulation.circulation.trigger(
+                    new_loan,
+                    **dict(
+                        params,
+                        item_pid=dict(type="itemid", value="item_pid"),
+                        pickup_location_pid="loc_pid",
+                    )
                 )
-            )
-            assert returned_loan["state"] == "ITEM_RETURNED"
+                assert returned_loan["state"] == "ITEM_RETURNED"
 
-            # item `item_pid` has been attached to pending loan request on
-            # `document_pid` automatically
-            assert pending_loan["state"] == "PENDING"
-            assert pending_loan["item_pid"] == dict(
-                type="itemid", value="item_pid"
-            )
-            assert pending_loan["document_pid"] == "document_pid"
+                # item `item_pid` has been attached to pending loan request on
+                # `document_pid` automatically
+                assert pending_loan["state"] == "PENDING"
+                assert pending_loan["item_pid"] == dict(
+                    type="itemid", value="item_pid"
+                )
+                assert pending_loan["document_pid"] == "document_pid"

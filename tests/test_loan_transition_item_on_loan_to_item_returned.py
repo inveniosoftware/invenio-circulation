@@ -60,7 +60,9 @@ def test_item_on_loan_to_item_returned_same_location(
     with SwappedConfig(
         "CIRCULATION_ITEM_LOCATION_RETRIEVER", lambda x: "loc_pid"
     ):
-        loan = current_circulation.circulation.trigger(
-            loan, **dict(params)
-        )
-        assert loan["state"] == "ITEM_RETURNED"
+        with SwappedConfig(
+                "CIRCULATION_SAME_LOCATION_VALIDATOR", lambda x, y: True):
+            loan = current_circulation.circulation.trigger(
+                loan, **dict(params)
+            )
+            assert loan["state"] == "ITEM_RETURNED"

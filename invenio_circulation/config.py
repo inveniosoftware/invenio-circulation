@@ -25,8 +25,9 @@ from .utils import can_be_requested, document_exists, document_ref_builder, \
     get_default_extension_duration, get_default_extension_max_count, \
     get_default_loan_duration, is_loan_duration_valid, item_can_circulate, \
     item_exists, item_location_retriever, item_ref_builder, patron_exists, \
-    patron_ref_builder, transaction_location_validator, \
-    transaction_user_validator, validate_item_pickup_transaction_locations
+    patron_ref_builder, same_location_validator, \
+    transaction_location_validator, transaction_user_validator, \
+    validate_item_pickup_transaction_locations
 
 CIRCULATION_ITEMS_RETRIEVER_FROM_DOCUMENT = None
 """Function that returns a list of item PIDs given a Document PID."""
@@ -129,6 +130,9 @@ CIRCULATION_TRANSACTION_USER_VALIDATOR = transaction_user_validator
 CIRCULATION_LOAN_LOCATIONS_VALIDATION = \
     validate_item_pickup_transaction_locations
 """Function that verifies pending loan item, pickup and transaction locs."""
+
+CIRCULATION_SAME_LOCATION_VALIDATOR = same_location_validator
+"""Validates location of given item_pid and given location_pid are the same."""
 
 # JSON Schema resolvers
 CIRCULATION_ITEM_REF_BUILDER = item_ref_builder
