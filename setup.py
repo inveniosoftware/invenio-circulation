@@ -38,7 +38,7 @@ extras_require = {
         'elasticsearch>=7.0.0,<7.14',
     ],
     'docs': [
-        'Sphinx>=3.3.1,<3.4',
+        'Sphinx>=4.2.0',
     ],
     'mysql': [
         'invenio-db[mysql,versioning]>={}'.format(invenio_db_version)
