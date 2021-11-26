@@ -7,6 +7,11 @@
 Changes
 =======
 
+Version 1.0.0a35 (released 2021-11-26)
+
+- Made compatibility changes for werkzeug 2
+- Bumped Sphinx
+
 Version 1.0.0a34 (released 2021-10-26)
 
 - make "same location" check overridable
