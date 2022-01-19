@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2018-2020 CERN.
-# Copyright (C) 2018-2020 RERO.
+# Copyright (C) 2018-2022 RERO.
 #
 # Invenio-Circulation is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -111,7 +111,6 @@ setup(
         'invenio_base.api_blueprints': [
             'invenio_circulation_loan_actions = '
             'invenio_circulation.views:create_loan_actions_blueprint',
-            'invenio_circulation_loan_for_item = '
             'invenio_circulation_loan_replace_item = '
             'invenio_circulation.views:create_loan_replace_item_blueprint',
 
