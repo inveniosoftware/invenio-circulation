@@ -7,6 +7,10 @@
 Changes
 =======
 
+Version v1.0.0a36 (released 2022-02-21)
+
+- Fix invenio_base.api_blueprints in setup.py
+
 Version 1.0.0a35 (released 2021-11-26)
 
 - Made compatibility changes for werkzeug 2
