@@ -8,7 +8,6 @@
 
 """Circulation API."""
 
-from elasticsearch import VERSION as ES_VERSION
 from flask import current_app
 from invenio_jsonschemas import current_jsonschemas
 from invenio_pidstore.resolver import Resolver
@@ -127,10 +126,7 @@ def is_item_available_for_checkout(item_pid):
         filter_states=config.get("CIRCULATION_STATES_LOAN_ACTIVE"),
     )
     search_result = search.execute()
-    if ES_VERSION[0] >= 7:
-        return search_result.hits.total.value == 0
-    else:
-        return search_result.hits.total == 0
+    return search_result.hits.total.value == 0
 
 
 def is_item_at_desk_available_for_checkout(item_pid, patron_pid):
@@ -143,10 +139,7 @@ def is_item_at_desk_available_for_checkout(item_pid, patron_pid):
         filter_states=["ITEM_AT_DESK"],
     )
     search_result = search.execute()
-    if ES_VERSION[0] >= 7:
-        item_exception_loans = search_result.hits.total.value
-    else:
-        item_exception_loans = search_result.hits.total
+    item_exception_loans = search_result.hits.total.value
 
     if item_exception_loans == 1:
         return True

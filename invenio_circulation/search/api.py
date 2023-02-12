@@ -8,7 +8,6 @@
 
 """Circulation search API."""
 
-from elasticsearch_dsl import VERSION as ES_VERSION
 from invenio_search.api import RecordsSearch
 
 from invenio_circulation.errors import MissingRequiredParameterError
@@ -27,12 +26,7 @@ class LoansSearch(RecordsSearch):
 
     def exclude(self, *args, **kwargs):
         """Add method `exclude` to old elastic search versions."""
-        if ES_VERSION[0] == 2:
-            from elasticsearch_dsl.query import Bool, Q
-
-            return self.query(Bool(filter=[~Q(*args, **kwargs)]))
-        else:
-            return super().exclude(*args, **kwargs)
+        return super().exclude(*args, **kwargs)
 
 
 def search_by_pid(

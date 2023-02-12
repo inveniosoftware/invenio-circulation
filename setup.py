@@ -29,13 +29,16 @@ invenio_db_version = "1.0.9,<1.1.0"
 invenio_search_version = "1.3.1,<1.4.0"
 
 extras_require = {
-    'elasticsearch6': [
-        'invenio-search[elasticsearch6]>={}'.format(invenio_search_version)
-    ],
     'elasticsearch7': [
         'invenio-search[elasticsearch7]>={}'.format(invenio_search_version),
         # unsupported ES version issue
         'elasticsearch>=7.0.0,<7.14',
+    ],
+    'opensearch1': [
+        'invenio-search[opensearch1]>={}'.format(invenio_search_version),
+    ],
+    'opensearch2': [
+        'invenio-search[opensearch2]>={}'.format(invenio_search_version),
     ],
     'docs': [
         'Sphinx>=4.2.0',
