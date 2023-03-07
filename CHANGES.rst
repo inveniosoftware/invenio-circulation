@@ -7,6 +7,10 @@
 Changes
 =======
 
+Version v2.0.0a1 (released 2023-03-07)
+
+- opensearch: create opensearch v1 and v2 mappings.
+
 Version v1.0.0a36 (released 2022-02-21)
 
 - Fix invenio_base.api_blueprints in setup.py
