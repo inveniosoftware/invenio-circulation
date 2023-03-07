@@ -51,7 +51,6 @@ for name, reqs in extras_require.items():
         "mysql",
         "postgresql",
         "sqlite",
-        "elasticsearch6",
         "elasticsearch7",
     ):
         continue

@@ -12,4 +12,4 @@ Development installation:
 .. code-block:: console
 
    $ pip install -r requirements-devel.txt
-   $ pip install -e .[all,elasticsearch6,postgresql]
+   $ pip install -e .[all,elasticsearch7,postgresql]
