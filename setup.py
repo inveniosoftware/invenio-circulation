@@ -17,22 +17,30 @@ history = open("CHANGES.rst").read()
 
 tests_require = [
     "mock>=2.0.0",
-    "pytest-invenio>=1.4.1,<1.5.0",
+    "pytest-invenio>=2.0.0,<2.2.0",
     "pytest-mock>=1.6.0",
-    "celery[pytest]>=4.4.0,<5.1",  # Temporary, until fixed in `pytest-invenio`
+    "celery>=4.4.0,<5.3",  # Temporary, until fixed in `pytest-invenio`
     "invenio-app>=1.3.1",
     "invenio-jsonschemas>=1.0.1",
-    "Flask>=1.1.0,<2.0.0",
+    "Flask>=2.2.0,<2.3.0",
 ]
 
-invenio_db_version = "1.0.9,<1.1.0"
-invenio_search_version = "1.4.0,<1.5.0"
+invenio_db_version = "1.1.0,<1.2.0"
+invenio_search_version = "2.1.0,<3.0.0"
 
 extras_require = {
     "elasticsearch7": [
         "invenio-search[elasticsearch7]>={}".format(invenio_search_version),
         # unsupported ES version issue
         "elasticsearch>=7.0.0,<7.14",
+    ],
+    "opensearch1": [
+        "invenio-search[opensearch1]>={}".format(invenio_search_version),
+        "opensearch-py>=1.1.0,<2.0.0"
+    ],
+    "opensearch2": [
+        "invenio-search[opensearch2]>={}".format(invenio_search_version),
+        "opensearch-py>=2.0.0,<3.0.0"
     ],
     "docs": [
         "Sphinx>=4.2.0",
@@ -52,6 +60,8 @@ for name, reqs in extras_require.items():
         "postgresql",
         "sqlite",
         "elasticsearch7",
+        "opensearch1",
+        "opensearch2",
     ):
         continue
     extras_require["all"].extend(reqs)
@@ -60,14 +70,12 @@ setup_requires = ["Babel>=2.8"]
 
 install_requires = [
     "arrow>=0.15.0",
-    "invenio-base>=1.2.4",
-    "invenio-access>=1.3.1",
-    "invenio-indexer>=1.3.0,<1.4.0",
-    "invenio-logging>=1.2.1",
-    "invenio-pidstore>=1.1.0",
-    "invenio-records-rest>=1.6.4",
-    "invenio-jsonschemas>=1.0.1",
-    "jsonschema>=3.0.0,<4.0.0",
+    "invenio-access>=2.0.0,<3.0.0",
+    "invenio-indexer>=2.2.0,<3.0.0",
+    "invenio-logging>=1.0.0,<3.0.0",
+    "invenio-pidstore>=1.3.0,<1.4.0",
+    "invenio-records-rest>=2.2.0,<2.3.0",
+    "invenio-jsonschemas>=1.1.4,<1.2.0"
 ]
 
 packages = find_packages()

@@ -12,7 +12,7 @@ from datetime import date, datetime
 
 import arrow
 from flask import current_app
-from flask_babelex import lazy_gettext as _
+from invenio_i18n import lazy_gettext as _
 from invenio_records_rest.schemas import RecordMetadataSchemaJSONV1
 from invenio_records_rest.schemas.fields import PersistentIdentifier
 from marshmallow import Schema, ValidationError, fields, post_load, validates

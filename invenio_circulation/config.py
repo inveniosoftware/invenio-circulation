@@ -183,7 +183,6 @@ CIRCULATION_REST_ENDPOINTS = dict(
         pid_minter=CIRCULATION_LOAN_MINTER,
         pid_fetcher=CIRCULATION_LOAN_FETCHER,
         search_class=LoansSearch,
-        search_type=None,
         record_class=Loan,
         record_loaders={
             "application/json": (
