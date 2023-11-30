@@ -46,7 +46,7 @@ class DateTimeString(fields.DateTime):
         _value = super().deserialize(value, attr, data, **kwargs)
         # return the value as string after marshmallow validation
         # because Invenio does not support Python datetime JSON serializer yet
-        if _value and type(_value) == datetime:
+        if _value and isinstance(_value, datetime):
             return _value.isoformat()
         return _value
 
@@ -60,7 +60,7 @@ class DateString(fields.Date):
         _value = super().deserialize(value, attr, data, **kwargs)
         # return the value as string after marshmallow validation
         # because Invenio does not support Python datetime JSON serializer yet
-        if _value and type(_value) == date:
+        if _value and isinstance(_value, date):
             return _value.isoformat()
         return _value
 

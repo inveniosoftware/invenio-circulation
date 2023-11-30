@@ -29,7 +29,7 @@ jobs:
       matrix:
           python-version: [3.9]
           requirements-level: [pypi]
-          db-service: [postgresql13, postgres14]
+          db-service: [postgresql13, postgresql14]
           search-service: [elasticsearch7, opensearch2]
           include:
           - search-service: opensearch2
@@ -41,7 +41,7 @@ jobs:
     env:
       DB: ${{ matrix.db-service }}
       SEARCH: ${{ matrix.search-service }}
-      EXTRAS: tests,${{ matrix.SEARCH_EXTRAS }}
+      EXTRAS: tests,${{ matrix.SEARCH_EXTRAS }},postgresql
 
     steps:
       - name: Checkout

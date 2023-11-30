@@ -13,12 +13,21 @@ from invenio_db import db
 
 from invenio_circulation.proxies import current_circulation
 
-from ..api import can_be_requested, get_available_item_by_doc_pid, \
-    get_document_pid_by_item_pid, get_pending_loans_by_doc_pid, \
-    is_item_at_desk_available_for_checkout
-from ..errors import ItemDoNotMatchError, ItemNotAvailableError, \
-    LoanMaxExtensionError, RecordCannotBeRequestedError, \
-    TransitionConditionsFailedError, TransitionConstraintsViolationError
+from ..api import (
+    can_be_requested,
+    get_available_item_by_doc_pid,
+    get_document_pid_by_item_pid,
+    get_pending_loans_by_doc_pid,
+    is_item_at_desk_available_for_checkout,
+)
+from ..errors import (
+    ItemDoNotMatchError,
+    ItemNotAvailableError,
+    LoanMaxExtensionError,
+    RecordCannotBeRequestedError,
+    TransitionConditionsFailedError,
+    TransitionConstraintsViolationError,
+)
 from ..transitions.base import Transition
 
 

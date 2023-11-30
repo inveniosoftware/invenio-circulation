@@ -10,12 +10,19 @@
 
 import pytest
 
-from invenio_circulation.errors import InvalidLoanStateError, \
-    InvalidPermissionError, ItemNotAvailableError, LoanMaxExtensionError, \
-    MissingRequiredParameterError, MultipleLoansOnItemError, \
-    NotImplementedConfigurationError, NoValidTransitionAvailableError, \
-    RecordCannotBeRequestedError, TransitionConditionsFailedError, \
-    TransitionConstraintsViolationError
+from invenio_circulation.errors import (
+    InvalidLoanStateError,
+    InvalidPermissionError,
+    ItemNotAvailableError,
+    LoanMaxExtensionError,
+    MissingRequiredParameterError,
+    MultipleLoansOnItemError,
+    NotImplementedConfigurationError,
+    NoValidTransitionAvailableError,
+    RecordCannotBeRequestedError,
+    TransitionConditionsFailedError,
+    TransitionConstraintsViolationError,
+)
 
 
 def test_not_implemented(app):

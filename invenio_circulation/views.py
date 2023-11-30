@@ -16,8 +16,11 @@ from invenio_records_rest.utils import obj_or_import_string
 from invenio_records_rest.views import pass_record
 from invenio_rest import ContentNegotiatedMethodView
 
-from .errors import InvalidLoanStateError, ItemNotAvailableError, \
-    MissingRequiredParameterError
+from .errors import (
+    InvalidLoanStateError,
+    ItemNotAvailableError,
+    MissingRequiredParameterError,
+)
 from .permissions import need_permissions
 from .pidstore.pids import _LOANID_CONVERTER, CIRCULATION_LOAN_PID_TYPE
 from .proxies import current_circulation

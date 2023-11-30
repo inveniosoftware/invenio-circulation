@@ -11,6 +11,7 @@
 import os
 
 import sphinx.environment
+
 from invenio_circulation import __version__
 
 # -- General configuration ------------------------------------------------

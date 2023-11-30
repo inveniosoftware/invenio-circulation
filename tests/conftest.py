@@ -27,13 +27,25 @@ from invenio_circulation.permissions import loan_read_access
 from invenio_circulation.pidstore.minters import loan_pid_minter
 
 from .helpers import create_loan, test_views_permissions_factory
-from .utils import can_be_requested, document_exists, document_ref_builder, \
-    get_default_extension_duration, get_default_extension_max_count, \
-    get_default_loan_duration, is_loan_duration_valid, item_can_circulate, \
-    item_exists, item_location_retriever, item_ref_builder, patron_exists, \
-    patron_ref_builder, same_location_validator, \
-    transaction_location_validator, transaction_user_validator, \
-    validate_item_pickup_transaction_locations
+from .utils import (
+    can_be_requested,
+    document_exists,
+    document_ref_builder,
+    get_default_extension_duration,
+    get_default_extension_max_count,
+    get_default_loan_duration,
+    is_loan_duration_valid,
+    item_can_circulate,
+    item_exists,
+    item_location_retriever,
+    item_ref_builder,
+    patron_exists,
+    patron_ref_builder,
+    same_location_validator,
+    transaction_location_validator,
+    transaction_user_validator,
+    validate_item_pickup_transaction_locations,
+)
 
 
 @pytest.fixture(scope="module")
