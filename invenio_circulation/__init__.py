@@ -9,6 +9,7 @@
 """Invenio module for the circulation of bibliographic items."""
 
 from .ext import InvenioCirculation
-from .version import __version__
+
+__version__ = "2.0.0a1"
 
 __all__ = ('__version__', 'InvenioCirculation')
