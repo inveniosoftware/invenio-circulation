@@ -16,10 +16,16 @@ from flask import current_app, has_request_context
 from invenio_db import db
 
 from ..api import Loan, is_item_available_for_checkout
-from ..errors import DocumentDoNotMatchError, DocumentNotAvailableError, \
-    InvalidLoanStateError, InvalidPermissionError, ItemNotAvailableError, \
-    MissingRequiredParameterError, TransitionConditionsFailedError, \
-    TransitionConstraintsViolationError
+from ..errors import (
+    DocumentDoNotMatchError,
+    DocumentNotAvailableError,
+    InvalidLoanStateError,
+    InvalidPermissionError,
+    ItemNotAvailableError,
+    MissingRequiredParameterError,
+    TransitionConditionsFailedError,
+    TransitionConstraintsViolationError,
+)
 from ..proxies import current_circulation
 from ..signals import loan_state_changed
 from ..utils import str2datetime

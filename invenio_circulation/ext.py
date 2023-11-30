@@ -17,8 +17,11 @@ from werkzeug.utils import cached_property
 
 from . import config
 from .api import Loan
-from .errors import InvalidLoanStateError, NoValidTransitionAvailableError, \
-    TransitionConditionsFailedError
+from .errors import (
+    InvalidLoanStateError,
+    NoValidTransitionAvailableError,
+    TransitionConditionsFailedError,
+)
 from .pidstore.pids import CIRCULATION_LOAN_PID_TYPE
 from .search.api import LoansSearch
 from .transitions.base import Transition

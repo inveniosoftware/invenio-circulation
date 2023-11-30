@@ -9,8 +9,11 @@
 """Tests for loan search class."""
 
 from invenio_circulation.api import Loan
-from invenio_circulation.search.api import search_by_patron_item_or_document, \
-    search_by_patron_pid, search_by_pid
+from invenio_circulation.search.api import (
+    search_by_patron_item_or_document,
+    search_by_patron_pid,
+    search_by_pid,
+)
 
 
 def _assert_total(total, expected):

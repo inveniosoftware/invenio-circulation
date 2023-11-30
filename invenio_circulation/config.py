@@ -13,21 +13,44 @@ from invenio_records_rest.utils import allow_all
 from .api import Loan
 from .links import loan_links_factory
 from .permissions import views_permissions_factory
-from .pidstore.pids import _LOANID_CONVERTER, CIRCULATION_LOAN_FETCHER, \
-    CIRCULATION_LOAN_MINTER, CIRCULATION_LOAN_PID_TYPE
+from .pidstore.pids import (
+    _LOANID_CONVERTER,
+    CIRCULATION_LOAN_FETCHER,
+    CIRCULATION_LOAN_MINTER,
+    CIRCULATION_LOAN_PID_TYPE,
+)
 from .search.api import LoansSearch
-from .transitions.transitions import CreatedToPending, \
-    ItemAtDeskToItemOnLoan, ItemInTransitHouseToItemReturned, \
-    ItemOnLoanToItemInTransitHouse, ItemOnLoanToItemOnLoan, \
-    ItemOnLoanToItemReturned, PendingToItemAtDesk, \
-    PendingToItemInTransitPickup, ToCancelled, ToItemOnLoan
-from .utils import can_be_requested, document_exists, document_ref_builder, \
-    get_default_extension_duration, get_default_extension_max_count, \
-    get_default_loan_duration, is_loan_duration_valid, item_can_circulate, \
-    item_exists, item_location_retriever, item_ref_builder, patron_exists, \
-    patron_ref_builder, same_location_validator, \
-    transaction_location_validator, transaction_user_validator, \
-    validate_item_pickup_transaction_locations
+from .transitions.transitions import (
+    CreatedToPending,
+    ItemAtDeskToItemOnLoan,
+    ItemInTransitHouseToItemReturned,
+    ItemOnLoanToItemInTransitHouse,
+    ItemOnLoanToItemOnLoan,
+    ItemOnLoanToItemReturned,
+    PendingToItemAtDesk,
+    PendingToItemInTransitPickup,
+    ToCancelled,
+    ToItemOnLoan,
+)
+from .utils import (
+    can_be_requested,
+    document_exists,
+    document_ref_builder,
+    get_default_extension_duration,
+    get_default_extension_max_count,
+    get_default_loan_duration,
+    is_loan_duration_valid,
+    item_can_circulate,
+    item_exists,
+    item_location_retriever,
+    item_ref_builder,
+    patron_exists,
+    patron_ref_builder,
+    same_location_validator,
+    transaction_location_validator,
+    transaction_user_validator,
+    validate_item_pickup_transaction_locations,
+)
 
 CIRCULATION_ITEMS_RETRIEVER_FROM_DOCUMENT = None
 """Function that returns a list of item PIDs given a Document PID."""
@@ -183,7 +206,6 @@ CIRCULATION_REST_ENDPOINTS = dict(
         pid_minter=CIRCULATION_LOAN_MINTER,
         pid_fetcher=CIRCULATION_LOAN_FETCHER,
         search_class=LoansSearch,
-        search_type=None,
         record_class=Loan,
         record_loaders={
             "application/json": (

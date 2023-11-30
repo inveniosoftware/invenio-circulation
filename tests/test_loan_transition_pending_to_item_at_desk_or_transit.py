@@ -10,11 +10,12 @@
 
 import pytest
 
-from invenio_circulation.errors import NotImplementedConfigurationError, \
-    NoValidTransitionAvailableError
+from invenio_circulation.errors import (
+    NotImplementedConfigurationError,
+    NoValidTransitionAvailableError,
+)
 from invenio_circulation.proxies import current_circulation
-from invenio_circulation.utils import \
-    validate_item_pickup_transaction_locations
+from invenio_circulation.utils import validate_item_pickup_transaction_locations
 
 from .helpers import SwappedConfig
 

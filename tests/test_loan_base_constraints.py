@@ -11,9 +11,12 @@
 import arrow
 import pytest
 
-from invenio_circulation.errors import ItemDoNotMatchError, \
-    ItemNotAvailableError, MissingRequiredParameterError, \
-    TransitionConstraintsViolationError
+from invenio_circulation.errors import (
+    ItemDoNotMatchError,
+    ItemNotAvailableError,
+    MissingRequiredParameterError,
+    TransitionConstraintsViolationError,
+)
 from invenio_circulation.pidstore.fetchers import loan_pid_fetcher
 from invenio_circulation.proxies import current_circulation
 

@@ -13,8 +13,10 @@ from datetime import timedelta
 import arrow
 import pytest
 
-from invenio_circulation.errors import ItemNotAvailableError, \
-    TransitionConstraintsViolationError
+from invenio_circulation.errors import (
+    ItemNotAvailableError,
+    TransitionConstraintsViolationError,
+)
 from invenio_circulation.proxies import current_circulation
 
 from .helpers import SwappedConfig

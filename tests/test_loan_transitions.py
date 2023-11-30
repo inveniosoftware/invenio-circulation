@@ -15,11 +15,18 @@ import arrow
 import pytest
 from flask_security import login_user
 
-from invenio_circulation.api import get_loan_for_item, \
-    is_item_at_desk_available_for_checkout, is_item_available_for_checkout
-from invenio_circulation.errors import ItemDoNotMatchError, \
-    LoanMaxExtensionError, NoValidTransitionAvailableError, \
-    RecordCannotBeRequestedError, TransitionConstraintsViolationError
+from invenio_circulation.api import (
+    get_loan_for_item,
+    is_item_at_desk_available_for_checkout,
+    is_item_available_for_checkout,
+)
+from invenio_circulation.errors import (
+    ItemDoNotMatchError,
+    LoanMaxExtensionError,
+    NoValidTransitionAvailableError,
+    RecordCannotBeRequestedError,
+    TransitionConstraintsViolationError,
+)
 from invenio_circulation.proxies import current_circulation
 from invenio_circulation.utils import str2datetime
 
