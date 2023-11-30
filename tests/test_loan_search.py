@@ -8,8 +8,6 @@
 
 """Tests for loan search class."""
 
-from elasticsearch import VERSION as ES_VERSION
-
 from invenio_circulation.api import Loan
 from invenio_circulation.search.api import search_by_patron_item_or_document, \
     search_by_patron_pid, search_by_pid
@@ -17,10 +15,7 @@ from invenio_circulation.search.api import search_by_patron_item_or_document, \
 
 def _assert_total(total, expected):
     """Assert total (ES6 compatibility)."""
-    if ES_VERSION[0] >= 7:
-        assert total.value == expected
-    else:
-        assert total == expected
+    assert total.value == expected
 
 
 def test_search_loans_by_pid(indexed_loans):
