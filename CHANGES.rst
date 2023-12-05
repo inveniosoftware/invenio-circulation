@@ -7,6 +7,15 @@
 Changes
 =======
 
+Version v3.0.0a1 (released 2023-12-05)
+
+- breaking change: drop ES6 compatibility
+- installation: upgrade to opensearch
+- installation: upgrade invenio packages
+- installation: move to setup.cfg
+- CI: update test matrix
+
+
 Version v2.0.0a1 (released 2023-03-07)
 
 - opensearch: create opensearch v1 and v2 mappings.
