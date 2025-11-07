@@ -16,9 +16,7 @@ from .errors import NotImplementedConfigurationError
 
 def patron_exists(patron_pid):
     """Return True if patron exists, False otherwise."""
-    raise NotImplementedConfigurationError(
-        config_variable="CIRCULATION_PATRON_EXISTS"
-    )
+    raise NotImplementedConfigurationError(config_variable="CIRCULATION_PATRON_EXISTS")
 
 
 def item_exists(item_pid):
@@ -27,9 +25,7 @@ def item_exists(item_pid):
     :param item_pid: a dict containing `value` and `type` fields to
         uniquely identify the item.
     """
-    raise NotImplementedConfigurationError(
-        config_variable="CIRCULATION_ITEM_EXISTS"
-    )
+    raise NotImplementedConfigurationError(config_variable="CIRCULATION_ITEM_EXISTS")
 
 
 def document_exists(document_pid):
@@ -152,7 +148,7 @@ def transaction_user_validator(transaction_user_pid):
 
 def str2datetime(str_date):
     """Parse string date with timezone and return a datetime object."""
-    return arrow.get(str_date).to('utc')
+    return arrow.get(str_date).to("utc")
 
 
 def validate_item_pickup_transaction_locations(loan, destination, **kwargs):
@@ -180,6 +176,7 @@ def same_location_validator(item_pid, location_pid):
     :param location_pid: a location pid.
     :return: False if validation is not possible, otherwise True
     """
-    item_location_pid = \
-        current_app.config["CIRCULATION_ITEM_LOCATION_RETRIEVER"](item_pid)
+    item_location_pid = current_app.config["CIRCULATION_ITEM_LOCATION_RETRIEVER"](
+        item_pid
+    )
     return location_pid == item_location_pid

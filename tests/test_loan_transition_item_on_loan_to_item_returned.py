@@ -13,9 +13,7 @@ from invenio_circulation.proxies import current_circulation
 from .helpers import SwappedConfig
 
 
-def test_item_on_loan_to_item_in_transit_to_house(
-    loan_created, db, params
-):
+def test_item_on_loan_to_item_in_transit_to_house(loan_created, db, params):
     """Test transition from ITEM_ON_LOAN to ITEM_IN_TRANSIT_TO_HOUSE state."""
     loan = current_circulation.circulation.trigger(
         loan_created,
@@ -33,16 +31,12 @@ def test_item_on_loan_to_item_in_transit_to_house(
     with SwappedConfig(
         "CIRCULATION_ITEM_LOCATION_RETRIEVER", lambda x: "other_location_pid"
     ):
-        loan = current_circulation.circulation.trigger(
-            loan, **dict(params)
-        )
+        loan = current_circulation.circulation.trigger(loan, **dict(params))
 
         assert loan["state"] == "ITEM_IN_TRANSIT_TO_HOUSE"
 
 
-def test_item_on_loan_to_item_returned_same_location(
-    loan_created, db, params
-):
+def test_item_on_loan_to_item_returned_same_location(loan_created, db, params):
     """Test transition from ITEM_ON_LOAN to ITEM_RETURNED state."""
     loan = current_circulation.circulation.trigger(
         loan_created,
@@ -57,12 +51,7 @@ def test_item_on_loan_to_item_returned_same_location(
     assert loan["transaction_location_pid"] == "loc_pid"
 
     # item is returned to the same location
-    with SwappedConfig(
-        "CIRCULATION_ITEM_LOCATION_RETRIEVER", lambda x: "loc_pid"
-    ):
-        with SwappedConfig(
-                "CIRCULATION_SAME_LOCATION_VALIDATOR", lambda x, y: True):
-            loan = current_circulation.circulation.trigger(
-                loan, **dict(params)
-            )
+    with SwappedConfig("CIRCULATION_ITEM_LOCATION_RETRIEVER", lambda x: "loc_pid"):
+        with SwappedConfig("CIRCULATION_SAME_LOCATION_VALIDATOR", lambda x, y: True):
+            loan = current_circulation.circulation.trigger(loan, **dict(params))
             assert loan["state"] == "ITEM_RETURNED"

@@ -19,11 +19,9 @@ def loan_links_factory(pid, record=None):
     links = {}
     record = record or Loan.get_record_by_pid(pid.pid_value)
     actions = {}
-    transitions_config = current_app.config.get(
-        'CIRCULATION_LOAN_TRANSITIONS', {}
-    )
-    for transition in transitions_config.get(record['state']):
-        action = transition.get('trigger', 'next')
+    transitions_config = current_app.config.get("CIRCULATION_LOAN_TRANSITIONS", {})
+    for transition in transitions_config.get(record["state"]):
+        action = transition.get("trigger", "next")
         actions[action] = build_url_action_for_pid(pid, action)
-    links.setdefault('actions', actions)
+    links.setdefault("actions", actions)
     return links

@@ -15,7 +15,7 @@ from invenio_access import action_factory
 from invenio_access.permissions import Permission
 from invenio_records_rest.utils import allow_all
 
-loan_read_access = action_factory('loan-read-access')
+loan_read_access = action_factory("loan-read-access")
 
 
 def check_permission(permission):
@@ -38,9 +38,9 @@ def has_read_loan_permission(*args, **kwargs):
 
 def views_permissions_factory(action):
     """Circulation views permissions factory."""
-    if action == 'loan-read-access':
+    if action == "loan-read-access":
         return allow_all()
-    elif action == 'loan-actions':
+    elif action == "loan-actions":
         return allow_all()
 
 
@@ -49,13 +49,15 @@ def need_permissions(action):
 
     :param action: The action to evaluate permissions.
     """
+
     def decorator_builder(f):
         @wraps(f)
         def decorate(*args, **kwargs):
             check_permission(
-                current_app
-                .config['CIRCULATION_VIEWS_PERMISSIONS_FACTORY'](action)
+                current_app.config["CIRCULATION_VIEWS_PERMISSIONS_FACTORY"](action)
             )
             return f(*args, **kwargs)
+
         return decorate
+
     return decorator_builder

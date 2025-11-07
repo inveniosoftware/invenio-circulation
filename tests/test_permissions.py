@@ -18,17 +18,17 @@ from invenio_circulation.transitions.transitions import CreatedToPending
 def test_valid_permission(loan_created, params):
     """Test transition with valid permission."""
     transition = CreatedToPending(
-        'CREATED', 'PENDING', trigger='next', permission_factory=allow_all
+        "CREATED", "PENDING", trigger="next", permission_factory=allow_all
     )
     transition.execute(loan_created, **params)
-    assert loan_created['state'] == 'PENDING'
+    assert loan_created["state"] == "PENDING"
 
 
 def test_invalid_permission(loan_created, params):
     """Test transition without permission."""
     transition = CreatedToPending(
-        'CREATED', 'PENDING', trigger='next', permission_factory=deny_all
+        "CREATED", "PENDING", trigger="next", permission_factory=deny_all
     )
     with pytest.raises(InvalidPermissionError):
         transition.execute(loan_created, **params)
-    assert loan_created['state'] == 'CREATED'
+    assert loan_created["state"] == "CREATED"

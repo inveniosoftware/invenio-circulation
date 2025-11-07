@@ -18,7 +18,7 @@ def test_state_checkout_with_loan_pid(
 ):
     """Test that created Loan validates after a checkout action."""
     new_params = deepcopy(params)
-    new_params['trigger'] = 'checkout'
+    new_params["trigger"] = "checkout"
     loan = current_circulation.circulation.trigger(loan_created, **new_params)
     loan.validate()
 

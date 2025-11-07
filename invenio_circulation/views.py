@@ -55,8 +55,7 @@ def _get_loan_endpoint_options(app):
     default_media_type = options.get("default_media_type", "")
     rec_serializers = options.get("record_serializers", {})
     serializers = {
-        mime: obj_or_import_string(func)
-        for mime, func in rec_serializers.items()
+        mime: obj_or_import_string(func) for mime, func in rec_serializers.items()
     }
     return (
         options,
@@ -70,15 +69,12 @@ def _get_loan_endpoint_options(app):
 
 def create_loan_actions_blueprint(app):
     """Create a blueprint for Loan actions."""
-    blueprint = Blueprint(
-        "invenio_circulation_loan_actions", __name__, url_prefix=""
-    )
+    blueprint = Blueprint("invenio_circulation_loan_actions", __name__, url_prefix="")
 
     all_options, view_options = _get_loan_endpoint_options(app)
     view_options["ctx"]["loader"] = loan_loader
     loan_actions = LoanActionResource.as_view(
-        LoanActionResource.view_name.format(CIRCULATION_LOAN_PID_TYPE),
-        **view_options
+        LoanActionResource.view_name.format(CIRCULATION_LOAN_PID_TYPE), **view_options
     )
 
     distinct_actions = extract_transitions_from_app(app)
@@ -114,9 +110,7 @@ class LoanActionResource(ContentNegotiatedMethodView):
             pid,
             record,
             202,
-            links_factory=current_app.config.get(
-                "CIRCULATION_LOAN_LINKS_FACTORY"
-            ),
+            links_factory=current_app.config.get("CIRCULATION_LOAN_LINKS_FACTORY"),
         )
 
 
@@ -133,9 +127,7 @@ def create_loan_replace_item_blueprint(app):
         **view_options
     )
 
-    url = "circulation/loans/<{0}:pid_value>/replace-item".format(
-        _LOANID_CONVERTER
-    )
+    url = "circulation/loans/<{0}:pid_value>/replace-item".format(_LOANID_CONVERTER)
     blueprint.add_url_rule(url, view_func=replace_item_view, methods=["POST"])
     return blueprint
 
@@ -193,14 +185,13 @@ class LoanReplaceItemResource(ContentNegotiatedMethodView):
         current_circulation.loan_indexer().index(record)
 
         if old_item_pid:
-            loan_replace_item.send(self, old_item_pid=old_item_pid,
-                                   new_item_pid=new_item_pid)
+            loan_replace_item.send(
+                self, old_item_pid=old_item_pid, new_item_pid=new_item_pid
+            )
 
         return self.make_response(
             pid,
             record,
             202,
-            links_factory=current_app.config.get(
-                "CIRCULATION_LOAN_LINKS_FACTORY"
-            ),
+            links_factory=current_app.config.get("CIRCULATION_LOAN_LINKS_FACTORY"),
         )

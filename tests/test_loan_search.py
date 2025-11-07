@@ -24,11 +24,7 @@ def _assert_total(total, expected):
 def test_search_loans_by_pid(indexed_loans):
     """Test retrieve loan list belonging to an item."""
     item_pid = dict(type="itemid", value="item_pending_1")
-    loans = list(
-        search_by_pid(
-            item_pid=item_pid
-        ).scan()
-    )
+    loans = list(search_by_pid(item_pid=item_pid).scan())
     assert len(loans) == 1
     loan = Loan.get_record_by_pid(loans[0]["pid"])
     assert loan["item_pid"] == item_pid
@@ -99,9 +95,7 @@ def test_search_loans_by_patron_and_item_or_document(indexed_loans):
     _assert_total(search_result.hits.total, 0)
 
 
-def test_search_loans_by_patron_and_item_or_document_filtering_states(
-    indexed_loans
-):
+def test_search_loans_by_patron_and_item_or_document_filtering_states(indexed_loans):
     """Test retrieve loan list by patron and items filtering states."""
     search = search_by_patron_item_or_document(
         patron_pid="1",

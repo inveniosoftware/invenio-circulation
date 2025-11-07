@@ -34,14 +34,10 @@ def test_checkout_from_item_at_desk_valid_duration(loan_created, params):
     with SwappedConfig(
         "CIRCULATION_ITEM_LOCATION_RETRIEVER", lambda x: "pickup_location_pid"
     ):
-        loan = current_circulation.circulation.trigger(
-            loan, **dict(params)
-        )
+        loan = current_circulation.circulation.trigger(loan, **dict(params))
         assert loan["state"] == "ITEM_AT_DESK"
 
-        loan = current_circulation.circulation.trigger(
-            loan, **dict(params)
-        )
+        loan = current_circulation.circulation.trigger(loan, **dict(params))
 
         assert loan["state"] == "ITEM_ON_LOAN"
 
@@ -61,9 +57,7 @@ def test_checkout_from_item_at_desk_invalid_duration(loan_created, params):
     with SwappedConfig(
         "CIRCULATION_ITEM_LOCATION_RETRIEVER", lambda x: "pickup_location_pid"
     ):
-        loan = current_circulation.circulation.trigger(
-            loan, **dict(params)
-        )
+        loan = current_circulation.circulation.trigger(loan, **dict(params))
         assert loan["state"] == "ITEM_AT_DESK"
 
         now = arrow.utcnow()
@@ -72,6 +66,4 @@ def test_checkout_from_item_at_desk_invalid_duration(loan_created, params):
         loan["end_date"] = end_date.date().isoformat()
 
         with pytest.raises(TransitionConstraintsViolationError):
-            current_circulation.circulation.trigger(
-                loan, **dict(params)
-            )
+            current_circulation.circulation.trigger(loan, **dict(params))

@@ -11,7 +11,5 @@
 from flask import current_app
 from werkzeug.local import LocalProxy
 
-current_circulation = LocalProxy(
-    lambda: current_app.extensions['invenio-circulation']
-)
+current_circulation = LocalProxy(lambda: current_app.extensions["invenio-circulation"])
 """Helper proxy to circulation state object."""

@@ -27,7 +27,7 @@ from invenio_circulation.errors import (
 
 def test_not_implemented(app):
     """Test NotImplementedConfigurationError."""
-    config_variable = 'CONFIG_VAR'
+    config_variable = "CONFIG_VAR"
     msg = (
         "Function is not implemented. Implement this function in your module "
         "and pass it to the config variable '{}'".format(config_variable)
@@ -40,7 +40,7 @@ def test_not_implemented(app):
 
 def test_invalid_permission(app):
     """Test InvalidPermissionError."""
-    permission = 'simple_user'
+    permission = "simple_user"
     msg = "This action is not permitted for your role '{}'".format(permission)
     with pytest.raises(InvalidPermissionError) as ex:
         raise InvalidPermissionError(permission=permission)
@@ -50,12 +50,11 @@ def test_invalid_permission(app):
 
 def test_record_cannot_be_requested(app):
     """Test record cannot be requested."""
-    state = 'loan_state'
-    item_pid = 'item_pid'
-    msg = (
-        'Transition to {0} failed.'
-        'Document {1} can not be requested.'
-    ).format(state, item_pid)
+    state = "loan_state"
+    item_pid = "item_pid"
+    msg = ("Transition to {0} failed." "Document {1} can not be requested.").format(
+        state, item_pid
+    )
 
     with pytest.raises(RecordCannotBeRequestedError) as ex:
         raise RecordCannotBeRequestedError(description=msg)
@@ -67,9 +66,12 @@ def test_item_not_available(app):
     """Test item not available."""
     item_pid = dict(type="itemid", value="1")
     transition = "checkout"
-    msg = "The item requested with PID '{0}:{1}' is not available. " \
-          "Transition to '{2}' has failed." \
-        .format(item_pid["type"], item_pid["value"], transition)
+    msg = (
+        "The item requested with PID '{0}:{1}' is not available. "
+        "Transition to '{2}' has failed.".format(
+            item_pid["type"], item_pid["value"], transition
+        )
+    )
     with pytest.raises(ItemNotAvailableError) as ex:
         raise ItemNotAvailableError(item_pid=item_pid, transition=transition)
 
@@ -80,8 +82,9 @@ def test_item_not_available(app):
 def test_multiple_loans_on_item(app):
     """Test multiple loans on item."""
     item_pid = dict(type="itemid", value="1")
-    msg = "Multiple active loans on item with PID '{0}:{1}'" \
-        .format(item_pid["type"], item_pid["value"])
+    msg = "Multiple active loans on item with PID '{0}:{1}'".format(
+        item_pid["type"], item_pid["value"]
+    )
     with pytest.raises(MultipleLoansOnItemError) as ex:
         raise MultipleLoansOnItemError(item_pid=item_pid)
 
@@ -150,9 +153,6 @@ def test_loan_max_extensions(app):
         "for loan '{}'".format(extension_count, loan_pid)
     )
     with pytest.raises(LoanMaxExtensionError) as ex:
-        raise LoanMaxExtensionError(
-            loan_pid=loan_pid,
-            extension_count=extension_count
-        )
+        raise LoanMaxExtensionError(loan_pid=loan_pid, extension_count=extension_count)
     assert ex.value.code == 400
     assert ex.value.description == msg

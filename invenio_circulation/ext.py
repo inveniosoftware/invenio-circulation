@@ -48,17 +48,13 @@ class InvenioCirculation(object):
 
         # update RECORDS_REST_ENDPOINTS if not already set
         app.config.setdefault("RECORDS_REST_ENDPOINTS", {})
-        app.config["RECORDS_REST_ENDPOINTS"].setdefault(
-            CIRCULATION_LOAN_PID_TYPE, obj
-        )
+        app.config["RECORDS_REST_ENDPOINTS"].setdefault(CIRCULATION_LOAN_PID_TYPE, obj)
 
         app.extensions["invenio-circulation"] = self
 
     def init_config(self, app):
         """Initialize configuration."""
-        app.config.setdefault(
-            "CIRCULATION_ITEMS_RETRIEVER_FROM_DOCUMENT", lambda x: []
-        )
+        app.config.setdefault("CIRCULATION_ITEMS_RETRIEVER_FROM_DOCUMENT", lambda x: [])
         app.config.setdefault(
             "CIRCULATION_DOCUMENT_RETRIEVER_FROM_ITEM", lambda x: None
         )
@@ -132,6 +128,4 @@ class _Circulation(object):
             except TransitionConditionsFailedError:
                 pass
 
-        raise NoValidTransitionAvailableError(
-            loan_pid=loan["pid"], state=current_state
-        )
+        raise NoValidTransitionAvailableError(loan_pid=loan["pid"], state=current_state)
