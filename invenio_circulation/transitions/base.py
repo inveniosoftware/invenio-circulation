@@ -209,7 +209,8 @@ class Transition(object):
         current_circulation.loan_indexer().index(loan)
 
         loan_state_changed.send(
-            self,
+            current_app._get_current_object(),
+            transition=self,
             initial_loan=initial_loan,
             loan=loan,
             trigger=self.trigger,
