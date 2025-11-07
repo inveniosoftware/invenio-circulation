@@ -78,6 +78,11 @@
       },
       "trigger": {
         "type": "keyword"
+      },
+      "extra_data": {
+        "type": "object",
+        "dynamic": true,
+        "enabled": true
       }
     }
   }
