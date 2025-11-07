@@ -55,9 +55,7 @@ def test_signals_loan_extend(loan_created, params):
     assert updated_loan["state"] == "ITEM_ON_LOAN"
     assert trigger == "checkout"
 
-    current_circulation.circulation.trigger(
-        loan, **dict(params, trigger="extend")
-    )
+    current_circulation.circulation.trigger(loan, **dict(params, trigger="extend"))
     assert len(recorded) == 1
     initial_loan, updated_loan, trigger, kwargs = recorded.pop()
     assert initial_loan["state"] == "ITEM_ON_LOAN"

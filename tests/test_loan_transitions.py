@@ -74,13 +74,9 @@ def test_loan_checkout_checkin(
 
     # set same transaction location to avoid "in transit"
     same_location = params["transaction_location_pid"]
-    with SwappedConfig(
-        "CIRCULATION_ITEM_LOCATION_RETRIEVER", lambda x: same_location
-    ):
-        with SwappedConfig(
-                "CIRCULATION_SAME_LOCATION_VALIDATOR", lambda x, y: True):
-            loan = current_circulation.circulation.trigger(
-                loan, **dict(params))
+    with SwappedConfig("CIRCULATION_ITEM_LOCATION_RETRIEVER", lambda x: same_location):
+        with SwappedConfig("CIRCULATION_SAME_LOCATION_VALIDATOR", lambda x, y: True):
+            loan = current_circulation.circulation.trigger(loan, **dict(params))
             assert loan["state"] == "ITEM_RETURNED"
             # Keep changes in database to make item available for checkout
             # later
@@ -131,9 +127,7 @@ def test_can_change_item_and_loc_pid_before_checkout(
         )
         db.session.commit()
         assert changed_loan["state"] == "ITEM_IN_TRANSIT_FOR_PICKUP"
-        assert changed_loan["item_pid"] == dict(
-            type="itemid", value="other_item_pid_1"
-        )
+        assert changed_loan["item_pid"] == dict(type="itemid", value="other_item_pid_1")
         assert changed_loan["pickup_location_pid"] == "other_location_pid_1"
 
         changed_loan = copy.deepcopy(loan)
@@ -147,9 +141,7 @@ def test_can_change_item_and_loc_pid_before_checkout(
         )
         db.session.commit()
         assert changed_loan["state"] == "ITEM_AT_DESK"
-        assert changed_loan["item_pid"] == dict(
-            type="itemid", value="other_item_pid_2"
-        )
+        assert changed_loan["item_pid"] == dict(type="itemid", value="other_item_pid_2")
         assert changed_loan["pickup_location_pid"] == "pickup_location_pid"
 
         changed_loan = copy.deepcopy(loan)
@@ -164,9 +156,7 @@ def test_can_change_item_and_loc_pid_before_checkout(
         )
         db.session.commit()
         assert changed_loan["state"] == "ITEM_ON_LOAN"
-        assert changed_loan["item_pid"] == dict(
-            type="itemid", value="other_item_pid_3"
-        )
+        assert changed_loan["item_pid"] == dict(type="itemid", value="other_item_pid_3")
         assert changed_loan["pickup_location_pid"] == "other_location_pid_3"
 
 
@@ -236,9 +226,7 @@ def test_cannot_change_item_pid_after_checkout(
             )
 
 
-def test_loan_extend(
-    loan_created, params, mock_ensure_item_is_available_for_checkout
-):
+def test_loan_extend(loan_created, params, mock_ensure_item_is_available_for_checkout):
     """Test loan extend action."""
 
     mock_ensure_item_is_available_for_checkout.side_effect = None
@@ -496,13 +484,9 @@ def test_checkin_end_date_is_transaction_date(
     same_location = params["transaction_location_pid"]
     params["transaction_date"] = arrow.utcnow()
     new_transaction_date = params["transaction_date"]
-    with SwappedConfig(
-        "CIRCULATION_ITEM_LOCATION_RETRIEVER", lambda x: same_location
-    ):
-        with SwappedConfig(
-                "CIRCULATION_SAME_LOCATION_VALIDATOR", lambda x, y: True):
-            loan = current_circulation.circulation.trigger(
-                loan, **dict(params))
+    with SwappedConfig("CIRCULATION_ITEM_LOCATION_RETRIEVER", lambda x: same_location):
+        with SwappedConfig("CIRCULATION_SAME_LOCATION_VALIDATOR", lambda x, y: True):
+            loan = current_circulation.circulation.trigger(loan, **dict(params))
 
     assert loan["state"] == "ITEM_RETURNED"
     expected_end_date = str2datetime(new_transaction_date).date().isoformat()
@@ -529,17 +513,14 @@ def test_item_availability(indexed_loans):
     assert is_item_available_for_checkout(
         item_pid=dict(type="itemid", value="item_returned_6")
     )
-    assert is_item_available_for_checkout(
-        item_pid=dict(type="itemid", value="no_loan")
-    )
+    assert is_item_available_for_checkout(item_pid=dict(type="itemid", value="no_loan"))
     # item is not available because it has a loan with state ITEM_AT_DESK
     assert not is_item_available_for_checkout(
         item_pid=dict(type="itemid", value="item_at_desk_5")
     )
     # item is available because the checked-out patron owns the active loan
     assert is_item_at_desk_available_for_checkout(
-            item_pid=dict(type="itemid", value="item_at_desk_5"),
-            patron_pid="1"
+        item_pid=dict(type="itemid", value="item_at_desk_5"), patron_pid="1"
     )
 
 

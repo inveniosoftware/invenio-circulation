@@ -16,9 +16,12 @@ from werkzeug.routing import Rule
 def jsonresolver_loader(url_map):
     """Resolve the item reference."""
     from flask import current_app
-    resolving_path = current_app.config.get(
-        "CIRCULATION_ITEM_RESOLVING_PATH") or "/"
-    url_map.add(Rule(
-        resolving_path,
-        endpoint=current_app.config.get('CIRCULATION_ITEM_RESOLVER_ENDPOINT'),
-        host=current_app.config.get('JSONSCHEMAS_HOST')))
+
+    resolving_path = current_app.config.get("CIRCULATION_ITEM_RESOLVING_PATH") or "/"
+    url_map.add(
+        Rule(
+            resolving_path,
+            endpoint=current_app.config.get("CIRCULATION_ITEM_RESOLVER_ENDPOINT"),
+            host=current_app.config.get("JSONSCHEMAS_HOST"),
+        )
+    )

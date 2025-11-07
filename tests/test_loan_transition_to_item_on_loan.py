@@ -32,8 +32,7 @@ def test_created_to_item_on_loan_available_item_with_default_location(
     assert loan_created["state"] == "CREATED"
 
     with SwappedConfig(
-        "CIRCULATION_ITEM_LOCATION_RETRIEVER",
-        lambda x: "pickup_location_pid"
+        "CIRCULATION_ITEM_LOCATION_RETRIEVER", lambda x: "pickup_location_pid"
     ):
         loan = current_circulation.circulation.trigger(
             loan_created, **dict(params, trigger="checkout")
@@ -54,12 +53,11 @@ def test_created_to_item_on_loan_available_item_with_specified_location(
     assert loan_created["state"] == "CREATED"
 
     with SwappedConfig(
-        "CIRCULATION_ITEM_LOCATION_RETRIEVER",
-        lambda x: "pickup_location_pid"
+        "CIRCULATION_ITEM_LOCATION_RETRIEVER", lambda x: "pickup_location_pid"
     ):
         loan = current_circulation.circulation.trigger(
-            loan_created, **dict(params, trigger="checkout",
-                                 pickup_location_pid="other_location_pid")
+            loan_created,
+            **dict(params, trigger="checkout", pickup_location_pid="other_location_pid")
         )
 
     assert loan["state"] == "ITEM_ON_LOAN"
@@ -74,18 +72,19 @@ def test_created_to_item_on_loan_unavailable_item(
 
     assert loan_created["state"] == "CREATED"
 
-    mock_ensure_item_is_available_for_checkout.side_effect = \
-        ItemNotAvailableError(item_pid=dict(type="itemid", value="1"),
-                              transition="Fake Transition")
+    mock_ensure_item_is_available_for_checkout.side_effect = ItemNotAvailableError(
+        item_pid=dict(type="itemid", value="1"), transition="Fake Transition"
+    )
 
     with pytest.raises(ItemNotAvailableError):
         with SwappedConfig(
-            "CIRCULATION_ITEM_LOCATION_RETRIEVER",
-            lambda x: "pickup_location_pid"
+            "CIRCULATION_ITEM_LOCATION_RETRIEVER", lambda x: "pickup_location_pid"
         ):
             current_circulation.circulation.trigger(
-                loan_created, **dict(params, trigger="checkout",
-                                     pickup_location_pid="other_location_pid")
+                loan_created,
+                **dict(
+                    params, trigger="checkout", pickup_location_pid="other_location_pid"
+                )
             )
 
 
@@ -103,8 +102,7 @@ def test_created_to_item_on_loan_available_item_with_invalid_duration(
 
     with pytest.raises(TransitionConstraintsViolationError):
         with SwappedConfig(
-            "CIRCULATION_ITEM_LOCATION_RETRIEVER",
-            lambda x: "pickup_location_pid"
+            "CIRCULATION_ITEM_LOCATION_RETRIEVER", lambda x: "pickup_location_pid"
         ):
             current_circulation.circulation.trigger(
                 loan_created, **dict(params, trigger="checkout")
@@ -125,8 +123,7 @@ def test_created_to_item_on_loan_available_item_with_valid_duration(
     params["end_date"] = params["start_date"] + timedelta(days=59)
 
     with SwappedConfig(
-        "CIRCULATION_ITEM_LOCATION_RETRIEVER",
-        lambda x: "pickup_location_pid"
+        "CIRCULATION_ITEM_LOCATION_RETRIEVER", lambda x: "pickup_location_pid"
     ):
         loan = current_circulation.circulation.trigger(
             loan_created, **dict(params, trigger="checkout")
@@ -146,8 +143,7 @@ def test_pending_to_item_on_loan_available_item(
     mock_ensure_item_is_available_for_checkout.side_effect = None
 
     with SwappedConfig(
-        "CIRCULATION_ITEM_LOCATION_RETRIEVER",
-        lambda x: "pickup_location_pid"
+        "CIRCULATION_ITEM_LOCATION_RETRIEVER", lambda x: "pickup_location_pid"
     ):
         loan = current_circulation.circulation.trigger(
             loan_created, **dict(params, trigger="request")
@@ -156,8 +152,8 @@ def test_pending_to_item_on_loan_available_item(
         assert loan["state"] == "PENDING"
 
         loan = current_circulation.circulation.trigger(
-            loan_created, **dict(params, trigger="checkout",
-                                 pickup_location_pid="other_location_pid")
+            loan_created,
+            **dict(params, trigger="checkout", pickup_location_pid="other_location_pid")
         )
 
         assert loan["state"] == "ITEM_ON_LOAN"

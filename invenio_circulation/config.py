@@ -58,14 +58,15 @@ CIRCULATION_ITEMS_RETRIEVER_FROM_DOCUMENT = None
 CIRCULATION_DOCUMENT_RETRIEVER_FROM_ITEM = None
 """Function that returns the Document PID of a given Item PID."""
 
-CIRCULATION_STATES_LOAN_REQUEST = ['PENDING']
+CIRCULATION_STATES_LOAN_REQUEST = ["PENDING"]
 """Defines the list of states for which the loan is considered requested."""
 
-CIRCULATION_STATES_LOAN_ACTIVE = ['ITEM_AT_DESK',
-                                  'ITEM_ON_LOAN',
-                                  'ITEM_IN_TRANSIT_FOR_PICKUP',
-                                  'ITEM_IN_TRANSIT_TO_HOUSE',
-                                  ]
+CIRCULATION_STATES_LOAN_ACTIVE = [
+    "ITEM_AT_DESK",
+    "ITEM_ON_LOAN",
+    "ITEM_IN_TRANSIT_FOR_PICKUP",
+    "ITEM_IN_TRANSIT_TO_HOUSE",
+]
 """Defines the list of Loan states for which a Loan is considered as active.
 
 Items that have attached loans with these circulation statuses are
@@ -119,9 +120,7 @@ CIRCULATION_LOAN_TRANSITIONS = {
         dict(dest="CANCELLED", trigger="cancel", transition=ToCancelled),
     ],
     "ITEM_IN_TRANSIT_TO_HOUSE": [
-        dict(
-            dest="ITEM_RETURNED", transition=ItemInTransitHouseToItemReturned
-        ),
+        dict(dest="ITEM_RETURNED", transition=ItemInTransitHouseToItemReturned),
         dict(dest="CANCELLED", trigger="cancel", transition=ToCancelled),
     ],
     "ITEM_RETURNED": [],
@@ -150,8 +149,7 @@ CIRCULATION_TRANSACTION_LOCATION_VALIDATOR = transaction_location_validator
 CIRCULATION_TRANSACTION_USER_VALIDATOR = transaction_user_validator
 """Function that validates the User PID of the given transaction."""
 
-CIRCULATION_LOAN_LOCATIONS_VALIDATION = \
-    validate_item_pickup_transaction_locations
+CIRCULATION_LOAN_LOCATIONS_VALIDATION = validate_item_pickup_transaction_locations
 """Function that verifies pending loan item, pickup and transaction locs."""
 
 CIRCULATION_SAME_LOCATION_VALIDATOR = same_location_validator
@@ -208,24 +206,16 @@ CIRCULATION_REST_ENDPOINTS = dict(
         search_class=LoansSearch,
         record_class=Loan,
         record_loaders={
-            "application/json": (
-                "invenio_circulation.records.loaders:loan_loader"
-            )
+            "application/json": ("invenio_circulation.records.loaders:loan_loader")
         },
         record_serializers={
-            "application/json": (
-                "invenio_records_rest.serializers:json_v1_response"
-            )
+            "application/json": ("invenio_records_rest.serializers:json_v1_response")
         },
         search_serializers={
-            "application/json": (
-                "invenio_records_rest.serializers:json_v1_search"
-            )
+            "application/json": ("invenio_records_rest.serializers:json_v1_search")
         },
         list_route="/circulation/loans/",
-        item_route="/circulation/loans/<{0}:pid_value>".format(
-            _LOANID_CONVERTER
-        ),
+        item_route="/circulation/loans/<{0}:pid_value>".format(_LOANID_CONVERTER),
         default_media_type="application/json",
         max_result_window=10000,
         error_handlers=dict(),

@@ -44,14 +44,13 @@ def search_by_pid(
     if document_pid:
         search = search.filter("term", document_pid=document_pid)
     elif item_pid:
-        search = search \
-            .filter("term", item_pid__value=item_pid["value"]) \
-            .filter("term", item_pid__type=item_pid["type"])
+        search = search.filter("term", item_pid__value=item_pid["value"]).filter(
+            "term", item_pid__type=item_pid["type"]
+        )
     else:
         raise MissingRequiredParameterError(
             description=(
-                "One of the parameters 'item_pid' "
-                "or 'document_pid' is required."
+                "One of the parameters 'item_pid' " "or 'document_pid' is required."
             )
         )
 
@@ -74,9 +73,9 @@ def search_by_patron_item_or_document(
     search = search_cls().filter("term", patron_pid=patron_pid)
 
     if item_pid:
-        search = search \
-            .filter("term", item_pid__value=item_pid["value"]) \
-            .filter("term", item_pid__type=item_pid["type"])
+        search = search.filter("term", item_pid__value=item_pid["value"]).filter(
+            "term", item_pid__type=item_pid["type"]
+        )
     if document_pid:
         search = search.filter("term", document_pid=document_pid)
 

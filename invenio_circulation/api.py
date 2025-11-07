@@ -34,8 +34,7 @@ class Loan(Record):
 
     def __init__(self, data, model=None):
         """Constructor."""
-        self.item_ref_builder = current_app.config[
-            "CIRCULATION_ITEM_REF_BUILDER"]
+        self.item_ref_builder = current_app.config["CIRCULATION_ITEM_REF_BUILDER"]
         super().__init__(data, model)
 
     @classmethod
@@ -52,14 +51,12 @@ class Loan(Record):
     def create(cls, data, id_=None, **kwargs):
         """Create Loan record."""
         data["$schema"] = current_jsonschemas.path_to_url(cls._schema)
-        data.setdefault("state",
-                        current_app.config["CIRCULATION_LOAN_INITIAL_STATE"])
+        data.setdefault("state", current_app.config["CIRCULATION_LOAN_INITIAL_STATE"])
         cls.build_resolver_fields(data)
 
         # resolve document if `item_pid` provided
         if data.get("item_pid"):
-            data["document_pid"] = get_document_pid_by_item_pid(
-                data["item_pid"])
+            data["document_pid"] = get_document_pid_by_item_pid(data["item_pid"])
 
         return super().create(data, id_=id_, **kwargs)
 
@@ -102,9 +99,7 @@ class Loan(Record):
         """
         if not item_pid:
             msg = "Missing required arg 'item_pid' when updating loan '{}'"
-            raise MissingRequiredParameterError(
-                description=msg.format(self["pid"])
-            )
+            raise MissingRequiredParameterError(description=msg.format(self["pid"]))
         self["item_pid"] = item_pid
 
 
@@ -165,7 +160,7 @@ def get_pending_loans_by_item_pid(item_pid):
     """
     search = search_by_pid(
         item_pid=item_pid,
-        filter_states=current_app.config["CIRCULATION_STATES_LOAN_REQUEST"]
+        filter_states=current_app.config["CIRCULATION_STATES_LOAN_REQUEST"],
     )
     for result in search.scan():
         yield Loan.get_record_by_pid(result["pid"])
@@ -175,9 +170,7 @@ def get_pending_loans_by_doc_pid(document_pid):
     """Return any pending loans for the given document."""
     search = search_by_pid(
         document_pid=document_pid,
-        filter_states=current_app.config.get(
-            "CIRCULATION_STATES_LOAN_REQUEST"
-        ),
+        filter_states=current_app.config.get("CIRCULATION_STATES_LOAN_REQUEST"),
     )
     for result in search.scan():
         yield Loan.get_record_by_pid(result["pid"])
@@ -193,16 +186,12 @@ def get_available_item_by_doc_pid(document_pid):
 
 def get_items_by_doc_pid(document_pid):
     """Return a list of item PIDs for this document."""
-    return current_app.config["CIRCULATION_ITEMS_RETRIEVER_FROM_DOCUMENT"](
-        document_pid
-    )
+    return current_app.config["CIRCULATION_ITEMS_RETRIEVER_FROM_DOCUMENT"](document_pid)
 
 
 def get_document_pid_by_item_pid(item_pid):
     """Return the document pid of this item_pid."""
-    return current_app.config["CIRCULATION_DOCUMENT_RETRIEVER_FROM_ITEM"](
-        item_pid
-    )
+    return current_app.config["CIRCULATION_DOCUMENT_RETRIEVER_FROM_ITEM"](item_pid)
 
 
 def get_loan_for_item(item_pid):

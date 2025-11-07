@@ -51,15 +51,13 @@ class SwappedNestedConfig:
 
     def __enter__(self):
         """Save previous value and swap it with the new."""
-        config_obj = reduce(dict.__getitem__, self.nested_keys[:-1],
-                            current_app.config)
+        config_obj = reduce(dict.__getitem__, self.nested_keys[:-1], current_app.config)
         self.prev_value = config_obj[self.nested_keys[-1]]
         config_obj[self.nested_keys[-1]] = self.new_value
 
     def __exit__(self, type, value, traceback):
         """Restore previous value."""
-        config_obj = reduce(dict.__getitem__, self.nested_keys[:-1],
-                            current_app.config)
+        config_obj = reduce(dict.__getitem__, self.nested_keys[:-1], current_app.config)
         config_obj[self.nested_keys[-1]] = self.prev_value
 
 
@@ -75,7 +73,7 @@ def create_loan(data):
 
 def test_views_permissions_factory(action):
     """Test views permissions factory."""
-    if action == 'loan-read-access':
+    if action == "loan-read-access":
         return has_read_loan_permission()
     else:
         return deny_all()

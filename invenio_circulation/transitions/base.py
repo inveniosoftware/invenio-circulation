@@ -33,6 +33,7 @@ from ..utils import str2datetime
 
 def ensure_same_patron(f):
     """Validate that the patron PID exists and cannot be changed."""
+
     def inner(self, loan, **kwargs):
         new_patron_pid = kwargs.get("patron_pid")
 
@@ -48,11 +49,13 @@ def ensure_same_patron(f):
             raise TransitionConstraintsViolationError(description=msg)
 
         return f(self, loan, **kwargs)
+
     return inner
 
 
 def ensure_same_document(f):
     """Validate that the document PID exists and cannot be changed."""
+
     def inner(self, loan, **kwargs):
         new_doc_pid = kwargs.get("document_pid")
 
@@ -68,17 +71,17 @@ def ensure_same_document(f):
             raise DocumentDoNotMatchError(description=msg)
 
         return f(self, loan, **kwargs)
+
     return inner
 
 
 def ensure_required_params(f):
     """Decorator to ensure that all required parameters has been passed."""
+
     def inner(self, loan, **kwargs):
         missing = [p for p in self.REQUIRED_PARAMS if p not in kwargs]
         if missing:
-            msg = "Required input parameters are missing '[{}]'".format(
-                missing
-            )
+            msg = "Required input parameters are missing '[{}]'".format(missing)
             raise MissingRequiredParameterError(description=msg)
         if all(param not in kwargs for param in self.PARTIAL_REQUIRED_PARAMS):
             msg = "One of the required parameters '[{}]' is missing.".format(
@@ -86,33 +89,34 @@ def ensure_required_params(f):
             )
             raise MissingRequiredParameterError(description=msg)
         return f(self, loan, **kwargs)
+
     return inner
 
 
 def has_permission(f):
     """Decorator to check the transition should be manually triggered."""
+
     def inner(self, loan, **kwargs):
         if not has_request_context():
             # no request context: a transition can be triggered via CLI
             return f(self, loan, **kwargs)
 
         if self.permission_factory and not self.permission_factory(loan).can():
-            raise InvalidPermissionError(
-                permission=self.permission_factory(loan)
-            )
+            raise InvalidPermissionError(permission=self.permission_factory(loan))
         return f(self, loan, **kwargs)
+
     return inner
 
 
 def check_trigger(f):
     """Decorator to check the transition should be manually triggered."""
+
     def inner(self, loan, **kwargs):
         if kwargs.get("trigger", "next") != self.trigger:
             msg = "The transition with trigger '{}' does not exist."
-            raise TransitionConditionsFailedError(
-                description=msg.format(self.trigger)
-            )
+            raise TransitionConditionsFailedError(description=msg.format(self.trigger))
         return f(self, loan, **kwargs)
+
     return inner
 
 
@@ -127,9 +131,7 @@ class Transition(object):
 
     PARTIAL_REQUIRED_PARAMS = ["item_pid", "document_pid"]
 
-    def __init__(
-        self, src, dest, trigger="next", permission_factory=None, **kwargs
-    ):
+    def __init__(self, src, dest, trigger="next", permission_factory=None, **kwargs):
         """Init transition object."""
         self.src = src
         self.dest = dest
@@ -147,25 +149,23 @@ class Transition(object):
             raise TransitionConstraintsViolationError(description=msg)
 
         if not current_app.config["CIRCULATION_ITEM_EXISTS"](loan["item_pid"]):
-            raise ItemNotAvailableError(
-                item_pid=loan["item_pid"], transition=self.dest
-            )
+            raise ItemNotAvailableError(item_pid=loan["item_pid"], transition=self.dest)
 
     def ensure_item_is_available_for_checkout(self, loan):
         """Validate that an item is available."""
         self._check_item_before_availability(loan)
 
         if not is_item_available_for_checkout(loan["item_pid"]):
-            raise ItemNotAvailableError(
-                item_pid=loan["item_pid"], transition=self.dest
-            )
+            raise ItemNotAvailableError(item_pid=loan["item_pid"], transition=self.dest)
 
     def validate_transition_states(self):
         """Ensure that source and destination states are valid."""
         states = current_app.config["CIRCULATION_LOAN_TRANSITIONS"].keys()
         if not all([self.src in states, self.dest in states]):
-            msg = "Source state '{0}' or destination state '{1}' " \
-                  "not in [{2}]".format(self.src, self.dest, states)
+            msg = (
+                "Source state '{0}' or destination state '{1}' "
+                "not in [{2}]".format(self.src, self.dest, states)
+            )
             raise InvalidLoanStateError(description=msg)
 
     def _date_fields2datetime(self, kwargs):
@@ -192,11 +192,9 @@ class Transition(object):
 
         initial_loan = copy.deepcopy(loan)
 
-        self.before(loan, initial_loan, transition_kwargs=transition_kwargs,
-                    **kwargs)
+        self.before(loan, initial_loan, transition_kwargs=transition_kwargs, **kwargs)
         loan["state"] = self.dest
-        self.after(loan, initial_loan, transition_kwargs=transition_kwargs,
-                   **kwargs)
+        self.after(loan, initial_loan, transition_kwargs=transition_kwargs, **kwargs)
 
     def after(self, loan, initial_loan, transition_kwargs=None, **kwargs):
         """Commit record and index."""

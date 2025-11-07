@@ -59,8 +59,9 @@ def app_config(app_config):
     """Flask application fixture."""
     app_config["JSONSCHEMAS_ENDPOINT"] = "/schema"
     app_config["JSONSCHEMAS_HOST"] = "localhost:5000"
-    app_config["SQLALCHEMY_DATABASE_URI"] = \
+    app_config["SQLALCHEMY_DATABASE_URI"] = (
         "postgresql+psycopg2://invenio:invenio@localhost/invenio"
+    )
     app_config["RECORDS_REST_DEFAULT_READ_PERMISSION_FACTORY"] = allow_all
     app_config["CIRCULATION_ITEM_EXISTS"] = item_exists
     app_config["CIRCULATION_DOCUMENT_EXISTS"] = document_exists
@@ -69,16 +70,15 @@ def app_config(app_config):
     app_config["CIRCULATION_PATRON_REF_BUILDER"] = patron_ref_builder
     app_config["CIRCULATION_DOCUMENT_REF_BUILDER"] = document_ref_builder
     app_config["CIRCULATION_ITEM_LOCATION_RETRIEVER"] = item_location_retriever
-    app_config["CIRCULATION_TRANSACTION_LOCATION_VALIDATOR"] = \
+    app_config["CIRCULATION_TRANSACTION_LOCATION_VALIDATOR"] = (
         transaction_location_validator
-    app_config["CIRCULATION_TRANSACTION_USER_VALIDATOR"] = \
-        transaction_user_validator
-    app_config["CIRCULATION_LOAN_LOCATIONS_VALIDATION"] = \
+    )
+    app_config["CIRCULATION_TRANSACTION_USER_VALIDATOR"] = transaction_user_validator
+    app_config["CIRCULATION_LOAN_LOCATIONS_VALIDATION"] = (
         validate_item_pickup_transaction_locations
-    app_config["CIRCULATION_SAME_LOCATION_VALIDATOR"] = \
-        same_location_validator
-    app_config["CIRCULATION_DOCUMENT_RETRIEVER_FROM_ITEM"] = \
-        lambda x: "document_pid"
+    )
+    app_config["CIRCULATION_SAME_LOCATION_VALIDATOR"] = same_location_validator
+    app_config["CIRCULATION_DOCUMENT_RETRIEVER_FROM_ITEM"] = lambda x: "document_pid"
     app_config["CIRCULATION_POLICIES"] = dict(
         checkout=dict(
             duration_default=get_default_loan_duration,
@@ -90,9 +90,7 @@ def app_config(app_config):
             duration_default=get_default_extension_duration,
             max_count=get_default_extension_max_count,
         ),
-        request=dict(
-            can_be_requested=can_be_requested
-        )
+        request=dict(can_be_requested=can_be_requested),
     )
     return app_config
 
@@ -166,8 +164,7 @@ def indexed_loans(es, test_loans):
 @pytest.fixture()
 def mock_is_item_available_for_checkout():
     """Mock item_available check."""
-    path = \
-        "invenio_circulation.api.is_item_available_for_checkout"
+    path = "invenio_circulation.api.is_item_available_for_checkout"
     with mock.patch(path) as mock_is_item_available_for_checkout:
         mock_is_item_available_for_checkout.return_value = False
         yield mock_is_item_available_for_checkout
@@ -176,8 +173,7 @@ def mock_is_item_available_for_checkout():
 @pytest.fixture()
 def mock_is_item_at_desk_available_for_checkout():
     """Mock item_at_desk_available check."""
-    path = \
-        "invenio_circulation.api.is_item_at_desk_available_for_checkout"
+    path = "invenio_circulation.api.is_item_at_desk_available_for_checkout"
     with mock.patch(path) as mock_is_item_at_desk_available_for_checkout:
         mock_is_item_at_desk_available_for_checkout.return_value = False
         yield mock_is_item_at_desk_available_for_checkout
@@ -186,9 +182,7 @@ def mock_is_item_at_desk_available_for_checkout():
 @pytest.fixture()
 def mock_get_pending_loans_by_doc_pid():
     """Mock item_available check."""
-    path = \
-        "invenio_circulation.transitions.transitions" \
-        ".get_pending_loans_by_doc_pid"
+    path = "invenio_circulation.transitions.transitions" ".get_pending_loans_by_doc_pid"
     # assert path exists
     with mock.patch(path) as mock_get_pending_loans_by_doc_pid:
         mock_get_pending_loans_by_doc_pid.return_value = False
@@ -198,9 +192,10 @@ def mock_get_pending_loans_by_doc_pid():
 @pytest.fixture()
 def mock_ensure_item_is_available_for_checkout():
     """Mock ensure_item_is_available_for_checkout."""
-    path = \
-        "invenio_circulation.transitions.base.Transition" \
+    path = (
+        "invenio_circulation.transitions.base.Transition"
         ".ensure_item_is_available_for_checkout"
+    )
     with mock.patch(path) as mock_ensure_item_is_available_for_checkout:
         yield mock_ensure_item_is_available_for_checkout
 
@@ -213,9 +208,9 @@ def users(db, base_app):
     db.session.execute("ALTER SEQUENCE IF EXISTS accounts_user_id_seq RESTART")
     db.session.commit()
 
-    base_app.config[
-        "CIRCULATION_VIEWS_PERMISSIONS_FACTORY"
-    ] = test_views_permissions_factory
+    base_app.config["CIRCULATION_VIEWS_PERMISSIONS_FACTORY"] = (
+        test_views_permissions_factory
+    )
 
     with db.session.begin_nested():
         datastore = base_app.extensions["security"].datastore
@@ -233,15 +228,11 @@ def users(db, base_app):
 
         # Give role to admin
         admin_role = Role(name="admin")
-        db.session.add(
-            ActionRoles(action=superuser_access.value, role=admin_role)
-        )
+        db.session.add(ActionRoles(action=superuser_access.value, role=admin_role))
         datastore.add_role_to_user(admin, admin_role)
         # Give role to user
         manager_role = Role(name="manager")
-        db.session.add(
-            ActionRoles(action=loan_read_access.value, role=manager_role)
-        )
+        db.session.add(ActionRoles(action=loan_read_access.value, role=manager_role))
         datastore.add_role_to_user(manager, manager_role)
     db.session.commit()
 

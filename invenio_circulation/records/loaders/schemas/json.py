@@ -34,10 +34,7 @@ class DateTimeString(fields.DateTime):
     def validate_timezone(self, value):
         """Validate that the passed timezone, if any, is UTC."""
         # strong validation of input datetime to require UTC timezone
-        if (
-            arrow.get(value).isoformat()
-            != arrow.get(value).to("utc").isoformat()
-        ):
+        if arrow.get(value).isoformat() != arrow.get(value).to("utc").isoformat():
             raise ValidationError(_("Not a valid ISO-8601 UTC datetime."))
 
     def deserialize(self, value, attr=None, data=None, **kwargs):

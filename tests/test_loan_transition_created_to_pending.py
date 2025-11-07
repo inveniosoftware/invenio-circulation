@@ -117,11 +117,10 @@ def test_auto_assignment_of_returned_item_to_pending_document_requests(
     with SwappedConfig(
         "CIRCULATION_DOCUMENT_RETRIEVER_FROM_ITEM", lambda x: "document_pid"
     ):
-        with SwappedConfig(
-            "CIRCULATION_ITEM_LOCATION_RETRIEVER", lambda x: "loc_pid"
-        ):
+        with SwappedConfig("CIRCULATION_ITEM_LOCATION_RETRIEVER", lambda x: "loc_pid"):
             with SwappedConfig(
-                    "CIRCULATION_SAME_LOCATION_VALIDATOR", lambda x, y: True):
+                "CIRCULATION_SAME_LOCATION_VALIDATOR", lambda x, y: True
+            ):
                 # start a loan on item with pid 'item_pid'
                 new_loan = current_circulation.circulation.trigger(
                     loan_created,
@@ -170,7 +169,5 @@ def test_auto_assignment_of_returned_item_to_pending_document_requests(
                 # item `item_pid` has been attached to pending loan request on
                 # `document_pid` automatically
                 assert pending_loan["state"] == "PENDING"
-                assert pending_loan["item_pid"] == dict(
-                    type="itemid", value="item_pid"
-                )
+                assert pending_loan["item_pid"] == dict(type="itemid", value="item_pid")
                 assert pending_loan["document_pid"] == "document_pid"

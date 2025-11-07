@@ -51,9 +51,8 @@ class InvalidPermissionError(CirculationException):
 
     def __init__(self, permission=None, **kwargs):
         """Initialize exception."""
-        self.description = (
-            "This action is not permitted "
-            "for your role '{}'".format(permission)
+        self.description = "This action is not permitted " "for your role '{}'".format(
+            permission
         )
         super().__init__(**kwargs)
 
@@ -103,9 +102,12 @@ class ItemNotAvailableError(CirculationException):
             uniquely identify the item.
         :param transition: the transition that failed.
         """
-        self.description = "The item requested with PID '{0}:{1}' is not " \
-                           "available. Transition to '{2}' has failed." \
-            .format(item_pid["type"], item_pid["value"], transition)
+        self.description = (
+            "The item requested with PID '{0}:{1}' is not "
+            "available. Transition to '{2}' has failed.".format(
+                item_pid["type"], item_pid["value"], transition
+            )
+        )
         super().__init__(**kwargs)
 
 
@@ -138,8 +140,9 @@ class MultipleLoansOnItemError(CirculationException):
         :param item_pid: a dict containing `value` and `type` fields to
             uniquely identify the item.
         """
-        self.description = "Multiple active loans on item with PID '{0}:{1}'" \
-            .format(item_pid["type"], item_pid["value"])
+        self.description = "Multiple active loans on item with PID '{0}:{1}'".format(
+            item_pid["type"], item_pid["value"]
+        )
         super().__init__(**kwargs)
 
 

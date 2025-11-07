@@ -36,9 +36,9 @@ def _ensure_valid_loan_duration(loan, initial_loan):
     loan.setdefault("start_date", loan["transaction_date"])
 
     if not loan.get("end_date"):
-        get_loan_duration = current_app.config["CIRCULATION_POLICIES"][
-            "checkout"
-        ]["duration_default"]
+        get_loan_duration = current_app.config["CIRCULATION_POLICIES"]["checkout"][
+            "duration_default"
+        ]
         duration = get_loan_duration(loan, initial_loan)
         loan["end_date"] = loan["start_date"] + duration
 
@@ -61,6 +61,7 @@ def _ensure_item_attached_to_loan(loan):
 
 def ensure_same_item(f):
     """Validate that the item PID exists and cannot be changed."""
+
     def inner(self, loan, initial_loan, **kwargs):
         item_pid = kwargs.get("item_pid")
 
@@ -71,16 +72,16 @@ def ensure_same_item(f):
                 )
                 raise ItemNotAvailableError(description=msg)
 
-            wrong_pid_value = loan.get("item_pid") and \
-                item_pid["value"] != loan["item_pid"]["value"]
-            wrong_pid_type = loan.get("item_pid") and \
-                item_pid["type"] != loan["item_pid"]["type"]
+            wrong_pid_value = (
+                loan.get("item_pid") and item_pid["value"] != loan["item_pid"]["value"]
+            )
+            wrong_pid_type = (
+                loan.get("item_pid") and item_pid["type"] != loan["item_pid"]["type"]
+            )
             if wrong_pid_value or wrong_pid_type:
                 msg = (
                     "Cannot change item '{0}:{1}' while performing an "
-                    "action on this loan".format(
-                        item_pid["type"], item_pid["value"]
-                    )
+                    "action on this loan".format(item_pid["type"], item_pid["value"])
                 )
                 raise ItemDoNotMatchError(description=msg)
 
@@ -111,9 +112,9 @@ def _is_same_location(item_pid, location_pid):
     :param location_pid: a location pid.
     :return: False if validation is not possible, otherwise True
     """
-    return current_app.config[
-            "CIRCULATION_SAME_LOCATION_VALIDATOR"
-        ](item_pid, location_pid)
+    return current_app.config["CIRCULATION_SAME_LOCATION_VALIDATOR"](
+        item_pid, location_pid
+    )
 
 
 def _ensure_same_location(item_pid, location_pid, destination, error_msg):
@@ -132,14 +133,14 @@ def _ensure_not_same_location(item_pid, location_pid, destination, error_msg):
 
 def _validate_item_pickup_transaction_locations(loan, destination, **kwargs):
     """Validate the loan item, pickup and transaction locations."""
-    item_location_pid = \
-        current_app.config["CIRCULATION_ITEM_LOCATION_RETRIEVER"](
-            loan["item_pid"])
+    item_location_pid = current_app.config["CIRCULATION_ITEM_LOCATION_RETRIEVER"](
+        loan["item_pid"]
+    )
     kwargs["item_location_pid"] = item_location_pid
     validate_item_pickup_transaction_locations = current_app.config[
-        "CIRCULATION_LOAN_LOCATIONS_VALIDATION"]
-    if not validate_item_pickup_transaction_locations(
-            loan, destination, **kwargs):
+        "CIRCULATION_LOAN_LOCATIONS_VALIDATION"
+    ]
+    if not validate_item_pickup_transaction_locations(loan, destination, **kwargs):
         raise TransitionConditionsFailedError()
 
 
@@ -150,9 +151,8 @@ def _get_item_location(item_pid):
 
 def _ensure_default_pickup_location(loan, context):
     """Set default pickup location if no one."""
-    if not context.get("pickup_location_pid") \
-            or "pickup_location_pid" not in loan:
-        loan['pickup_location_pid'] = _get_item_location(loan['item_pid'])
+    if not context.get("pickup_location_pid") or "pickup_location_pid" not in loan:
+        loan["pickup_location_pid"] = _get_item_location(loan["item_pid"])
 
 
 class ToItemOnLoan(Transition):
@@ -187,21 +187,20 @@ class ItemAtDeskToItemOnLoan(Transition):
         self._check_item_before_availability(loan)
 
         # patron_pid is mandatory for next steps
-        if 'patron_pid' not in loan:
-            msg = "Patron not set for loan with pid '{}'".format(loan['pid'])
+        if "patron_pid" not in loan:
+            msg = "Patron not set for loan with pid '{}'".format(loan["pid"])
             raise TransitionConstraintsViolationError(description=msg)
 
         is_available = is_item_at_desk_available_for_checkout(
-            loan['item_pid'],
-            loan['patron_pid']
+            loan["item_pid"], loan["patron_pid"]
         )
         if not is_available:
-            raise ItemNotAvailableError(
-                item_pid=loan['item_pid'], transition=self.dest)
+            raise ItemNotAvailableError(item_pid=loan["item_pid"], transition=self.dest)
 
 
 def check_request_on_document(f):
     """Decorator to check if the request is on document."""
+
     def inner(self, loan, initial_loan, **kwargs):
         document_pid = kwargs.get("document_pid")
         if document_pid and not kwargs.get("item_pid"):
@@ -212,36 +211,27 @@ def check_request_on_document(f):
                 raise RecordCannotBeRequestedError(description=msg)
 
             if self.assign_item:
-                available_item_pid = get_available_item_by_doc_pid(
-                    document_pid
-                )
+                available_item_pid = get_available_item_by_doc_pid(document_pid)
                 if available_item_pid:
                     kwargs["item_pid"] = available_item_pid
 
         if kwargs.get("item_pid") and not kwargs.get("pickup_location_pid"):
             # if no pickup location was specified in the request,
             # assign a default one
-            kwargs["pickup_location_pid"] = _get_item_location(
-                kwargs["item_pid"]
-            )
+            kwargs["pickup_location_pid"] = _get_item_location(kwargs["item_pid"])
 
         return f(self, loan, initial_loan, **kwargs)
+
     return inner
 
 
 class CreatedToPending(Transition):
     """Action to request to loan an item."""
 
-    def __init__(
-        self, src, dest, trigger="next", permission_factory=None, **kwargs
-    ):
+    def __init__(self, src, dest, trigger="next", permission_factory=None, **kwargs):
         """Constructor."""
         super().__init__(
-            src,
-            dest,
-            trigger=trigger,
-            permission_factory=permission_factory,
-            **kwargs
+            src, dest, trigger=trigger, permission_factory=permission_factory, **kwargs
         )
         self.assign_item = kwargs.get("assign_item", True)
 
@@ -289,9 +279,9 @@ class ItemOnLoanToItemOnLoan(Transition):
         extension_count = loan.get("extension_count", 0)
         extension_count += 1
 
-        get_extension_max_count_func = current_app.config[
-            "CIRCULATION_POLICIES"
-        ]["extension"]["max_count"]
+        get_extension_max_count_func = current_app.config["CIRCULATION_POLICIES"][
+            "extension"
+        ]["max_count"]
         extension_max_count = get_extension_max_count_func(loan)
         if extension_count > extension_max_count:
             raise LoanMaxExtensionError(
@@ -301,14 +291,14 @@ class ItemOnLoanToItemOnLoan(Transition):
 
     def update_loan_end_date(self, loan, initial_loan):
         """Update the end date of the extended loan."""
-        get_extension_duration_func = current_app.config[
-            "CIRCULATION_POLICIES"
-        ]["extension"]["duration_default"]
+        get_extension_duration_func = current_app.config["CIRCULATION_POLICIES"][
+            "extension"
+        ]["duration_default"]
         duration = get_extension_duration_func(loan, initial_loan)
 
-        should_extend_from_end_date = current_app.config[
-            "CIRCULATION_POLICIES"
-        ]["extension"]["from_end_date"]
+        should_extend_from_end_date = current_app.config["CIRCULATION_POLICIES"][
+            "extension"
+        ]["from_end_date"]
         if not should_extend_from_end_date:
             # extend from the transaction_date instead
             loan["end_date"] = loan["transaction_date"]
@@ -342,16 +332,10 @@ class ItemOnLoanToItemInTransitHouse(Transition):
 class ItemOnLoanToItemReturned(Transition):
     """Check-in action when returning an item to its belonging location."""
 
-    def __init__(
-        self, src, dest, trigger="next", permission_factory=None, **kwargs
-    ):
+    def __init__(self, src, dest, trigger="next", permission_factory=None, **kwargs):
         """Constructor."""
         super().__init__(
-            src,
-            dest,
-            trigger=trigger,
-            permission_factory=permission_factory,
-            **kwargs
+            src, dest, trigger=trigger, permission_factory=permission_factory, **kwargs
         )
         self.assign_item = kwargs.get("assign_item", True)
 
@@ -379,16 +363,10 @@ class ItemOnLoanToItemReturned(Transition):
 class ItemInTransitHouseToItemReturned(Transition):
     """Check-in action when returning an item to its belonging location."""
 
-    def __init__(
-        self, src, dest, trigger="next", permission_factory=None, **kwargs
-    ):
+    def __init__(self, src, dest, trigger="next", permission_factory=None, **kwargs):
         """Constructor."""
         super().__init__(
-            src,
-            dest,
-            trigger=trigger,
-            permission_factory=permission_factory,
-            **kwargs
+            src, dest, trigger=trigger, permission_factory=permission_factory, **kwargs
         )
         self.assign_item = kwargs.get("assign_item", True)
 
