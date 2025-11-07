@@ -23,6 +23,7 @@ include *.txt
 include LICENSE
 include babel.ini
 include pytest.ini
+include .git-blame-ignore-revs
 prune docs/_build
 recursive-include invenio_circulation *.po *.pot *.mo *.html
 recursive-include docs *.png
