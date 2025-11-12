@@ -22,12 +22,11 @@ on:
         required: false
         default: "Manual trigger"
 
-
 jobs:
   Python:
     uses: inveniosoftware/workflows/.github/workflows/tests-python.yml@master
     with:
       extras: 'postgresql,tests'
       python-version: '["3.9"]'
-      db-service: '["postgresql13", "postgresql14"]'
+      db-service: '["postgresql14"]'
       search-service: '["elasticsearch7", "opensearch2"]'
