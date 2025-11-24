@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2018 CERN.
+# Copyright (C) 2018-2025 CERN.
 # Copyright (C) 2018 RERO.
 #
 # Invenio-Circulation is free software; you can redistribute it and/or modify
@@ -10,6 +10,6 @@
 
 from .ext import InvenioCirculation
 
-__version__ = "3.0.0a1"
+__version__ = "4.0.0"
 
 __all__ = ("__version__", "InvenioCirculation")
