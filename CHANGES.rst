@@ -1,11 +1,20 @@
 ..
-    Copyright (C) 2018-2020 CERN.
+    Copyright (C) 2018-2025 CERN.
     Copyright (C) 2018-2020 RERO.
     Invenio-Circulation is free software; you can redistribute it and/or modify it
     under the terms of the MIT License; see LICENSE file for more details.
 
 Changes
 =======
+
+Version v4.0.0 (released 2025-11-24)
+
+- tests: drop support for testing postgresql13
+- tests: make use of inveniosoftware standard ci workflow
+- index: add `extra_data` property to loan mapping
+- (breaking) global: make first parameter of `loan_state_changed` signal the `current_object`
+- chore: add commit that formats project with black to `git-blame-ignore-refs`
+- chore: format code with black
 
 Version v3.0.0a1 (released 2023-12-05)
 
