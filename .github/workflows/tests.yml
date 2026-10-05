@@ -27,6 +27,6 @@ jobs:
     uses: inveniosoftware/workflows/.github/workflows/tests-python.yml@master
     with:
       extras: 'postgresql,tests'
-      python-version: '["3.9"]'
+      python-version: '["3.14"]'
       db-service: '["postgresql14"]'
       search-service: '["elasticsearch7", "opensearch2"]'
